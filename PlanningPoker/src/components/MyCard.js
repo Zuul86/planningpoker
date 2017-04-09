@@ -11,7 +11,7 @@ const MyCard = ({cardNumber, onClick}) =>  {
 
 MyCard.propTypes = {
     cardNumber: React.PropTypes.number,
-    onClick: React.PropTypes.func.isRequired
+    onClick: React.PropTypes.func
 };
 
 export default (MyCard);
