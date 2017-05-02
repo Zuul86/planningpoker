@@ -1,11 +1,17 @@
 import React, {PropTypes} from 'react';
 
 const TeamCards = (props) => {
-    return <div>{props.effort}</div>;
+    return (
+        <div>
+            <div><input type="button" value="Join Table" /></div>
+            {props.cards.map((item)=> {
+                return <div key={item.effort.toString()}>{item.effort}</div>;
+            })}
+        </div>);
 };
 
 TeamCards.propTypes = {
-    effort: PropTypes.number
+    cards: PropTypes.array
 };
 
 export default TeamCards;
