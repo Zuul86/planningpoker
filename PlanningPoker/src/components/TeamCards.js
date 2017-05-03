@@ -5,7 +5,7 @@ const TeamCards = (props) => {
         <div>
             <div><input type="button" value="Join Table" /></div>
             {props.cards.map((item)=> {
-                return <div key={item.effort.toString()}>{item.effort}</div>;
+                return <div key={item.Effort.toString()}>{item.Effort}</div>;
             })}
         </div>);
 };

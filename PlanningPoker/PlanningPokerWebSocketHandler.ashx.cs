@@ -76,7 +76,7 @@ namespace PlanningPoker
                 if (socket.State == WebSocketState.Open)
                 {
                     var serializer = new JavaScriptSerializer();
-                    var message = serializer.Serialize(new { effort = effort, userId = uniqueId.ToString() });
+                    var message = serializer.Serialize(new { Effort = effort, UserId = uniqueId.ToString() });
                     buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(message));
                     foreach (var client in Clients)
                     {
