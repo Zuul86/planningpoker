@@ -1,9 +1,9 @@
 import React from 'react';
 import '../styles/mycard.css';
 
-const MyCard = ({cardNumber, socket}) =>  {
+const MyCard = ({cardNumber, onCardClick}) =>  {
     const _handleClick = () => {
-        socket.sendMessage(cardNumber);
+        onCardClick(cardNumber);
     };
 
     return <div className="card" onClick={_handleClick}><div>{cardNumber}</div></div>;  
@@ -11,7 +11,7 @@ const MyCard = ({cardNumber, socket}) =>  {
 
 MyCard.propTypes = {
     cardNumber: React.PropTypes.number,
-    socket: React.PropTypes.object
+    onCardClick: React.PropTypes.func
 };
 
 export default (MyCard);

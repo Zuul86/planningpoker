@@ -7,13 +7,18 @@ import TeamCards from './TeamCards';
 import PokerWebSocket from '../utils/PokerWebSocket';
 import * as actionCreators from '../actions/cardActions';
 
-class Main extends React.Component {
+class Main extends React.Component {   
+
+    componentWillMount(){
+        this.socket = this.socket || new PokerWebSocket(this.props);
+        this.send = (x) => this.socket.sendMessage(x);
+    }
+
     render(){
-        const socket = new PokerWebSocket('ws://'+ window.location.host +'/PlanningPokerWebSocketHandler.ashx', this.props);
         return(
             <div>
                 <TeamCards cards={this.props.cards} />
-                <MyCards socket={socket} />
+                <MyCards onCardClick={this.send} />
             </div>
         );
     }
