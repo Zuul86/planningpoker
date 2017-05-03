@@ -76,7 +76,7 @@ namespace PlanningPoker
                     buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(message));
                     foreach (var client in Clients)
                     {
-                        await socket.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                        await client.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
                     }
                 }
                 else
