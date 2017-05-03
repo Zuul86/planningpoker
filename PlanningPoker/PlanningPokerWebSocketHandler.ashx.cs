@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Script.Serialization;
 using System.Web.WebSockets;
 
 namespace PlanningPoker
@@ -15,7 +16,7 @@ namespace PlanningPoker
     /// </summary>
     public class PlanningPokerWebSocketHandler : IHttpHandler
     {
-        private static readonly IList<WebSocket> Clients = new List<WebSocket>();
+        private static readonly IDictionary<Guid, WebSocket> Clients = new Dictionary<Guid, WebSocket>();
 
         private static readonly ReaderWriterLockSlim Locker = new ReaderWriterLockSlim();
 
@@ -38,11 +39,12 @@ namespace PlanningPoker
         private async Task ProcessRequestInternal(AspNetWebSocketContext context)
         {
             var socket = context.WebSocket;
+            var uniqueId = Guid.NewGuid();
 
             Locker.EnterWriteLock();
             try
             {
-                Clients.Add(socket);
+                Clients.Add(uniqueId, socket);
             }
             finally
             {
@@ -54,7 +56,7 @@ namespace PlanningPoker
                 var buffer = new ArraySegment<byte>(new byte[1024]);
 
                 WebSocketReceiveResult result = null;
-                string message;
+                string effort;
                 using (var stream = new MemoryStream())
                 {
                     do
@@ -67,16 +69,18 @@ namespace PlanningPoker
 
                     using (var reader = new StreamReader(stream, Encoding.UTF8))
                     {
-                        message = await reader.ReadToEndAsync();
+                        effort = await reader.ReadToEndAsync();
                     }
                 }
                 
                 if (socket.State == WebSocketState.Open)
                 {
+                    var serializer = new JavaScriptSerializer();
+                    var message = serializer.Serialize(new { effort = effort, userId = uniqueId.ToString() });
                     buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(message));
                     foreach (var client in Clients)
                     {
-                        await client.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                        await client.Value.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
                     }
                 }
                 else
@@ -84,7 +88,7 @@ namespace PlanningPoker
                     Locker.EnterWriteLock();
                     try
                     {
-                        Clients.Remove(socket);
+                        Clients.Remove(uniqueId);
                     }
                     finally
                     {

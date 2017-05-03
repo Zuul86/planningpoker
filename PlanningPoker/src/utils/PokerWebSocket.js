@@ -3,7 +3,7 @@ export default class PokerWebSocket {
         this.socket = new WebSocket('ws://'+ window.location.host +'/PlanningPokerWebSocketHandler.ashx');
         
         this.socket.addEventListener('message', function (event) {
-            props.selectCard(event.data);
+            props.selectCard(JSON.parse(event.data));
         });
 
         this.socket.addEventListener('open', function (event) {

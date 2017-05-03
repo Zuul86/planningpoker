@@ -1,5 +1,5 @@
 import * as types from './actionTypes';
 
-export function selectCard(effort){
-    return { type: types.SELECT_CARD, effort, UserId: '1234' };
+export function selectCard(selection){
+    return { type: types.SELECT_CARD, effort: selection.effort, UserId: selection.userId };
 }
