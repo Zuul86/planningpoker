@@ -178,9 +178,7 @@
     <None Include="src\components\MyCard.js" />
     <None Include="src\components\MyCards.js" />
     <None Include="src\components\MyCards.test.js" />
-    <None Include="src\components\MyCardsContainer.js" />
     <None Include="src\components\TeamCards.js" />
-    <None Include="src\components\TeamCardsContainer.js" />
     <None Include="src\index.html" />
     <None Include="src\index.js" />
     <None Include="src\index.test.js" />

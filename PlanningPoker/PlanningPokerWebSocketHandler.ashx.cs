@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.WebSockets;
 using System.Text;
@@ -14,6 +15,9 @@ namespace PlanningPoker
     /// </summary>
     public class PlanningPokerWebSocketHandler : IHttpHandler
     {
+        private static readonly IList<WebSocket> Clients = new List<WebSocket>();
+
+        private static readonly ReaderWriterLockSlim Locker = new ReaderWriterLockSlim();
 
         public void ProcessRequest(HttpContext context)
         {
@@ -34,7 +38,17 @@ namespace PlanningPoker
         private async Task ProcessRequestInternal(AspNetWebSocketContext context)
         {
             var socket = context.WebSocket;
-            //Clients
+
+            Locker.EnterWriteLock();
+            try
+            {
+                Clients.Add(socket);
+            }
+            finally
+            {
+                Locker.ExitWriteLock();
+            }
+
             while (true)
             {
                 var buffer = new ArraySegment<byte>(new byte[1024]);
@@ -60,7 +74,25 @@ namespace PlanningPoker
                 if (socket.State == WebSocketState.Open)
                 {
                     buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(message));
-                    await socket.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                    foreach (var client in Clients)
+                    {
+                        await socket.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                    }
+                }
+                else
+                {
+                    Locker.EnterWriteLock();
+                    try
+                    {
+                        Clients.Remove(socket);
+                    }
+                    finally
+                    {
+                        Locker.ExitWriteLock();
+                    }
+
+                    break;
+
                 }
             }
         }
