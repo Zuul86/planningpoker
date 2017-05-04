@@ -3,7 +3,7 @@ import initialState from './initialState';
 
 function findMySelectionIndex(state, id){
     return state.findIndex((item) => {
-        return item.UserId = id;
+        return item.UserId === id;
     });
 }
 
