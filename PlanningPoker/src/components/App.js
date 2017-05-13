@@ -5,7 +5,8 @@ import {connect} from 'react-redux';
 import MyCards from './MyCards';
 import TeamCards from './TeamCards';
 import PokerWebSocket from '../utils/PokerWebSocket';
-import * as actionCreators from '../actions/cardActions';
+import * as cardActions from '../actions/cardActions';
+import * as clientActions from '../actions/clientActions';
 
 class Main extends React.Component {   
 
@@ -17,7 +18,7 @@ class Main extends React.Component {
     render(){
         return(
             <div>
-                <TeamCards cards={this.props.cards} />
+                <TeamCards cards={this.props.cards} numberOfClients={this.props.numberOfClients}/>
                 <MyCards onCardClick={this.send} />
             </div>
         );
@@ -25,17 +26,24 @@ class Main extends React.Component {
 }
 
 Main.propTypes = {
-    cards: PropTypes.array
+    cards: PropTypes.array,
+    numberOfClients: PropTypes.number
 };
 
 function mapStateToProps(state = {}){
     return {
-        cards: state.cards || []
+        cards: state.cards || [],
+        numberOfClients: state.clients
     };
 }
 
 function mapDispatchToProps(dispatch){
-    return bindActionCreators(actionCreators, dispatch);
+    return {
+        actions: {
+            cardActions: bindActionCreators(cardActions, dispatch),
+            clientActions: bindActionCreators(clientActions, dispatch)
+        }
+    };
 }
 
 const App = connect(mapStateToProps, mapDispatchToProps)(Main);

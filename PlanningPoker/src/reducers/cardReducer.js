@@ -9,13 +9,15 @@ function findMySelectionIndex(state, id){
 
 function addSelection(state, action){
     const index = findMySelectionIndex(state, action.UserId);
+    let cards = [];
     if (index >= 0){
-        const newState = [...state];
-        newState.splice(index, 1,  action);
-        return newState;
+        cards = [...state];
+        cards.splice(index, 1,  action);
     } else {
-        return [...state, action];
+        cards = [...state, action];
     }
+
+    return cards;
 }
 
 export function cardReducer(state = initialState.cards, action){

@@ -40,11 +40,13 @@ namespace PlanningPoker
         {
             var socket = context.WebSocket;
             var uniqueId = Guid.NewGuid();
+            var clientConnected = false;
 
             Locker.EnterWriteLock();
             try
             {
                 Clients.Add(uniqueId, socket);
+                clientConnected = true;
             }
             finally
             {
@@ -53,35 +55,18 @@ namespace PlanningPoker
 
             while (true)
             {
-                var buffer = new ArraySegment<byte>(new byte[1024]);
-
-                WebSocketReceiveResult result = null;
-                string effort;
-                using (var stream = new MemoryStream())
-                {
-                    do
-                    {
-                        result = await socket.ReceiveAsync(buffer, CancellationToken.None);
-                        await stream.WriteAsync(buffer.Array, buffer.Offset, result.Count);
-                    } while (!result.EndOfMessage);
-
-                    stream.Seek(0, SeekOrigin.Begin);
-
-                    using (var reader = new StreamReader(stream, Encoding.UTF8))
-                    {
-                        effort = await reader.ReadToEndAsync();
-                    }
-                }
-                
                 if (socket.State == WebSocketState.Open)
                 {
-                    var serializer = new JavaScriptSerializer();
-                    var message = serializer.Serialize(new { Effort = effort, UserId = uniqueId.ToString() });
-                    buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(message));
-                    foreach (var client in Clients)
+                    if (clientConnected)
                     {
-                        await client.Value.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                        await SendMessageAsync("clientConnection", new { NumberOfClients = Clients.Count });
+
+                        clientConnected = false;
                     }
+
+                    var effort = await ReceiveMessageAsync(socket);
+
+                    await SendMessageAsync("cardSelection", new { Effort = effort, UserId = uniqueId.ToString() });
                 }
                 else
                 {
@@ -89,6 +74,7 @@ namespace PlanningPoker
                     try
                     {
                         Clients.Remove(uniqueId);
+                        await SendMessageAsync("clientConnection", new { NumberOfClients = Clients.Count });
                     }
                     finally
                     {
@@ -97,6 +83,40 @@ namespace PlanningPoker
 
                     break;
 
+                }
+            }
+        }
+
+        private async Task SendMessageAsync(string messsage, object payload)
+        {
+            var serializer = new JavaScriptSerializer();
+
+            var message = serializer.Serialize(new { Message = messsage, Payload = payload });
+            var buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(message));
+            foreach (var client in Clients)
+            {
+                await client.Value.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+            }
+        }
+
+        private async Task<string> ReceiveMessageAsync(WebSocket socket)
+        {
+            var buffer = new ArraySegment<byte>(new byte[1024]);
+
+            WebSocketReceiveResult result = null;
+            using (var stream = new MemoryStream())
+            {
+                do
+                {
+                    result = await socket.ReceiveAsync(buffer, CancellationToken.None);
+                    await stream.WriteAsync(buffer.Array, buffer.Offset, result.Count);
+                } while (!result.EndOfMessage);
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                using (var reader = new StreamReader(stream, Encoding.UTF8))
+                {
+                    return await reader.ReadToEndAsync();
                 }
             }
         }

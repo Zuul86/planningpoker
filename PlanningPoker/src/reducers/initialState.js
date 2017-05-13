@@ -1,3 +1,4 @@
 export default {
-    cards: []
+    cards: [],
+    numberOfClients: 0
 };
