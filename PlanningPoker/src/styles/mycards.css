@@ -1,12 +1,14 @@
-.bottom-panel{
-    position:fixed;
-    left:0px;
-    bottom:0px;
-    height:20%;
-    width:100%;
-    background:#999;
+.bottom-panel {
+    position: fixed;
+    left: 0px;
+    bottom: 0px;
+    height: 20%;
+    width: 100%;
+    background: #999;
     text-align: center;
     box-shadow: inset 0 8px 30px black;
     vertical-align: middle;
     display: table-cell;
+    overflow: auto;
+    white-space: nowrap;
 }
