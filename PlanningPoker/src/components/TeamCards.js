@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import '../styles/mycard.css';
+import '../styles/teamcards.css';
 
 function groupCards(cards) {
     const groupedArray = [];
@@ -16,7 +16,7 @@ function groupCards(cards) {
         }
     });
 
-    return groupedArray;
+    return groupedArray.sort((a, b) => { return a - b; });
 }
 
 const TeamCards = (props) => {
@@ -24,7 +24,7 @@ const TeamCards = (props) => {
             <div>
                 <div>Number of team members: {props.numberOfClients}</div>
                 {groupCards(props.cards).map((item)=> {
-                    return <div className="card" key={item.UserId.toString()}>{item.Effort}</div>;
+                    return <div className="teamcard" key={item.UserId.toString()}>{item.Effort}</div>;
                 })}
             </div>);
 };

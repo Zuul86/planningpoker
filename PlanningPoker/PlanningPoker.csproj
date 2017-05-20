@@ -197,6 +197,7 @@
     <None Include="tools\srcServer.js" />
     <None Include="tools\startMessage.js" />
     <None Include="tools\testSetup.js" />
+    <Content Include="src\styles\teamcards.css" />
     <Content Include="src\utils\PokerWebSocket.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
