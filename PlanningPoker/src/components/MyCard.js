@@ -6,7 +6,9 @@ const MyCard = ({cardNumber, onCardClick}) =>  {
         onCardClick(cardNumber);
     };
 
-    return <div className="card" onClick={_handleClick}><div>{cardNumber}</div></div>;  
+    return (<div className="card" onClick={_handleClick}>
+        <div>{cardNumber}</div>
+    </div>);  
 };
 
 MyCard.propTypes = {

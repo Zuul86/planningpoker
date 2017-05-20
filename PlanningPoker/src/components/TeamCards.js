@@ -24,7 +24,10 @@ const TeamCards = (props) => {
             <div>
                 <div>Number of team members: {props.numberOfClients}</div>
                 {groupCards(props.cards).map((item)=> {
-                    return <div className="teamcard" key={item.UserId.toString()}>{item.Effort}</div>;
+                    return (<div className="teamcard" key={item.UserId.toString()}>
+                        {item.Effort}
+                        <span className="badge">{item.Count}</span>
+                    </div>);
                 })}
             </div>);
 };

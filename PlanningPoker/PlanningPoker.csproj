@@ -172,6 +172,8 @@
     </Content>
     <Content Include="Connected Services\Application Insights\ConnectedService.json" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="webpack.config.dev.js" />
+    <Content Include="webpack.config.prod.js" />
     <None Include="src\actions\actionTypes.js" />
     <None Include="src\actions\cardActions.js" />
     <None Include="src\components\App.js" />
