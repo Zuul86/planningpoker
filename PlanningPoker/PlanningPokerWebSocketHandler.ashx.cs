@@ -65,8 +65,11 @@ namespace PlanningPoker
                     }
 
                     var effort = await ReceiveMessageAsync(socket);
-
-                    await SendMessageAsync("cardSelection", new { Effort = effort, UserId = uniqueId.ToString() });
+                    //hack for now, not sure why receiving empty packet on refresh or browser close
+                    if (!string.IsNullOrEmpty(effort))
+                    {
+                        await SendMessageAsync("cardSelection", new { Effort = effort, UserId = uniqueId.ToString() });
+                    }
                 }
                 else
                 {

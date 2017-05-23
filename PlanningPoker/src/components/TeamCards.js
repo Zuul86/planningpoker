@@ -11,8 +11,8 @@ function groupCards(cards) {
         if (foundCard) {
             foundCard.Count++;
         } else {
-            card.Count = 1;
-            groupedArray.push(card);
+            var newCard = Object.assign({}, card, { Count: 1 });
+            groupedArray.push(newCard);
         }
     });
 
