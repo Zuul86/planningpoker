@@ -11,12 +11,12 @@ function groupCards(cards) {
         if (foundCard) {
             foundCard.Count++;
         } else {
-            var newCard = Object.assign({}, card, { Count: 1 });
+            const newCard = Object.assign({}, card, { Count: 1 });
             groupedArray.push(newCard);
         }
     });
 
-    return groupedArray.sort((a, b) => { return a - b; });
+    return groupedArray.sort((a, b) => { return b.Count - a.Count; });
 }
 
 const TeamCards = (props) => {
