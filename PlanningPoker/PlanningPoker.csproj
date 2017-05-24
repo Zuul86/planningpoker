@@ -172,6 +172,7 @@
     </Content>
     <Content Include="Connected Services\Application Insights\ConnectedService.json" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="src\actions\clientActions.js" />
     <Content Include="src\reducers\clientReducer.js" />
     <Content Include="webpack.config.dev.js" />
     <Content Include="webpack.config.prod.js" />

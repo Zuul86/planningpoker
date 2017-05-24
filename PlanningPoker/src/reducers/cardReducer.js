@@ -20,10 +20,25 @@ function addSelection(state, action){
     return cards;
 }
 
+function removeCard(state, action) {
+    const index = findMySelectionIndex(state, action.UserId);
+    let cards = [];
+    if (index >= 0) {
+        cards = [...state];
+        cards.splice(index, 1);
+    } else {
+        cards = [...state, action];
+    }
+
+    return cards;
+}
+
 export function cardReducer(state = initialState.cards, action){
     switch (action.type){
         case types.SELECT_CARD:           
             return addSelection(state, action);
+        case types.REMOVE_CARD:
+            return removeCard(state, action);
         default:
             return state;
     }

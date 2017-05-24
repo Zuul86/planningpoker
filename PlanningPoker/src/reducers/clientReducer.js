@@ -4,6 +4,7 @@ import initialState from './initialState';
 export function clientReducer(state = initialState.numberOfClients, action){
     switch (action.type){
         case types.CLIENT_CONNECTED:
+        case types.CLIENT_DISCONNECTED:
             return state = action.NumberOfClients;
         default:
             return state;

@@ -59,7 +59,7 @@ namespace PlanningPoker
                 {
                     if (clientConnected)
                     {
-                        await SendMessageAsync("clientConnection", new { NumberOfClients = Clients.Count });
+                        await SendMessageAsync("clientConnected", new { NumberOfClients = Clients.Count, UserId = uniqueId });
 
                         clientConnected = false;
                     }
@@ -77,7 +77,7 @@ namespace PlanningPoker
                     try
                     {
                         Clients.Remove(uniqueId);
-                        await SendMessageAsync("clientConnection", new { NumberOfClients = Clients.Count });
+                        await SendMessageAsync("clientDisconnected", new { NumberOfClients = Clients.Count, UserId = uniqueId });
                     }
                     finally
                     {

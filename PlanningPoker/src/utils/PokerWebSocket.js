@@ -8,8 +8,12 @@ export default class PokerWebSocket {
                 case 'cardSelection':
                     props.actions.cardActions.selectCard(response.Payload);
                     break;
-                case 'clientConnection':
+                case 'clientConnected':
                     props.actions.clientActions.clientConnected(response.Payload);
+                    break;
+                case 'clientDisconnected':
+                    props.actions.clientActions.clientDisconnected(response.Payload);
+                    props.actions.cardActions.removeCard(response.Payload);
                     break;
                 default:
                     throw new Error('unknown message');
