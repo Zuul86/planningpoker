@@ -63,12 +63,11 @@ namespace PlanningPoker
 
                         clientConnected = false;
                     }
+                    var message = await ReceiveMessageAsync(socket);
 
-                    var effort = await ReceiveMessageAsync(socket);
-                    //hack for now, not sure why receiving empty packet on refresh or browser close
-                    if (!string.IsNullOrEmpty(effort))
+                    if (!string.IsNullOrEmpty(message))
                     {
-                        await SendMessageAsync("cardSelection", new { Effort = effort, UserId = uniqueId.ToString() });
+                        await ProcessMessage(message, uniqueId.ToString());
                     }
                 }
                 else
@@ -87,6 +86,22 @@ namespace PlanningPoker
                     break;
 
                 }
+            }
+        }
+
+        private async Task ProcessMessage(string message, string id)
+        {
+            //check for empty message
+            var serializer = new JavaScriptSerializer();
+            var messageObj = serializer.Deserialize<SocketMessage>(message);
+            switch (messageObj.Type)
+            {
+                case "effort":
+                    await SendMessageAsync("cardSelection", new { Effort = messageObj.Value, UserId = id });
+                    break;
+                case "reveal":
+                    await SendMessageAsync("revealCards", new { ShowCards = messageObj.Value });
+                    break;
             }
         }
 

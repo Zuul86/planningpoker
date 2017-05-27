@@ -18,8 +18,8 @@ config.plugins = [
     new webpack.optimize.UglifyJsPlugin({ sourceMap: true })
 ];
 
-delete config.module.rules[1].loaders;
-config.module.rules[1].use= ExtractTextPlugin.extract({
+delete config.module.rules[2].loaders;
+config.module.rules[2].use= ExtractTextPlugin.extract({
           fallback: "style-loader?sourceMap",
           use: "css-loader?sourceMap"
         });

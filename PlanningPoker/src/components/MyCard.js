@@ -3,7 +3,7 @@ import '../styles/mycard.css';
 
 const MyCard = ({cardNumber, onCardClick}) =>  {
     const _handleClick = () => {
-        onCardClick(cardNumber);
+        onCardClick(JSON.stringify({ type: 'effort', value: cardNumber }));
     };
 
     return (<div className="card" onClick={_handleClick}>

@@ -162,6 +162,7 @@
       <DependentUpon>PlanningPokerWebSocketHandler.ashx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SocketMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />
@@ -173,7 +174,10 @@
     <Content Include="Connected Services\Application Insights\ConnectedService.json" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="src\actions\clientActions.js" />
+    <Content Include="src\actions\screenActions.js" />
+    <Content Include="src\components\TeamCard.js" />
     <Content Include="src\reducers\clientReducer.js" />
+    <Content Include="src\reducers\screenReducer.js" />
     <Content Include="webpack.config.dev.js" />
     <Content Include="webpack.config.prod.js" />
     <None Include="src\actions\actionTypes.js" />

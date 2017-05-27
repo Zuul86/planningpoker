@@ -5,5 +5,5 @@ export function clientConnected(connection) {
 }
 
 export function clientDisconnected(connection) {
-    return { type: types.CLIENT_DISCONNECTED, NumberOfClients: connection.NumberOfClients, UserId: connection.UserId }
+    return { type: types.CLIENT_DISCONNECTED, NumberOfClients: connection.NumberOfClients, UserId: connection.UserId };
 }

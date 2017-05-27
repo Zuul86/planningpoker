@@ -1,10 +1,12 @@
 import {combineReducers} from 'redux';
 import cards from './cardReducer';
-import clients from './clientReducer.js';
+import clients from './clientReducer';
+import screen from './screenReducer';
 
 const rootReducer = combineReducers({
     cards,
-    clients
+    clients,
+    screen
 });
 
 export default rootReducer;

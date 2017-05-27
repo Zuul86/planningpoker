@@ -1,4 +1,5 @@
 export default {
     cards: [],
-    numberOfClients: 0
+    numberOfClients: 0,
+    screen: { showCards: false }
 };

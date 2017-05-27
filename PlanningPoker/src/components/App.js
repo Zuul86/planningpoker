@@ -7,6 +7,12 @@ import TeamCards from './TeamCards';
 import PokerWebSocket from '../utils/PokerWebSocket';
 import * as cardActions from '../actions/cardActions';
 import * as clientActions from '../actions/clientActions';
+import * as screenActions from '../actions/screenActions';
+import '../../node_modules/bootstrap/dist/css/bootstrap.css';
+import '../../node_modules/bootstrap/dist/js/bootstrap';
+import '../../node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2';
+import '../../node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff';
+import '../../node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf';
 
 class Main extends React.Component {   
 
@@ -18,7 +24,7 @@ class Main extends React.Component {
     render(){
         return(
             <div>
-                <TeamCards cards={this.props.cards} numberOfClients={this.props.numberOfClients}/>
+                <TeamCards cards={this.props.cards} numberOfClients={this.props.numberOfClients} showCards={this.props.screen.showCards} onRevealClick={this.send} />
                 <MyCards onCardClick={this.send} />
             </div>
         );
@@ -27,13 +33,15 @@ class Main extends React.Component {
 
 Main.propTypes = {
     cards: PropTypes.array,
-    numberOfClients: PropTypes.number
+    numberOfClients: PropTypes.number,
+    screen: PropTypes.object
 };
 
-function mapStateToProps(state = {}){
+function mapStateToProps(state = { screen: {} }) {
     return {
         cards: state.cards || [],
-        numberOfClients: state.clients
+        numberOfClients: state.clients,
+        screen: state.screen
     };
 }
 
@@ -41,7 +49,8 @@ function mapDispatchToProps(dispatch){
     return {
         actions: {
             cardActions: bindActionCreators(cardActions, dispatch),
-            clientActions: bindActionCreators(clientActions, dispatch)
+            clientActions: bindActionCreators(clientActions, dispatch),
+            screenActions: bindActionCreators(screenActions, dispatch)
         }
     };
 }

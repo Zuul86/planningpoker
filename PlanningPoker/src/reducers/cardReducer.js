@@ -22,12 +22,9 @@ function addSelection(state, action){
 
 function removeCard(state, action) {
     const index = findMySelectionIndex(state, action.UserId);
-    let cards = [];
+    let cards = [...state];
     if (index >= 0) {
-        cards = [...state];
         cards.splice(index, 1);
-    } else {
-        cards = [...state, action];
     }
 
     return cards;
