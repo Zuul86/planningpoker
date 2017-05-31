@@ -10,6 +10,7 @@ const config = devConfig.default;
 
 config.devtool = 'source-map';
 config.entry.splice(0, 2);
+config.output.publicPath = '/dist/';
 config.devServer.contentBase = './dist';
 config.plugins = [
     new webpack.optimize.OccurrenceOrderPlugin(),

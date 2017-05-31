@@ -30,12 +30,18 @@ function removeCard(state, action) {
     return cards;
 }
 
+function clearCardArray(state, action) {
+    return [];
+}
+
 export function cardReducer(state = initialState.cards, action){
     switch (action.type){
         case types.SELECT_CARD:           
             return addSelection(state, action);
         case types.REMOVE_CARD:
             return removeCard(state, action);
+        case types.RESET_TABLE:
+            return clearCardArray(state, action);
         default:
             return state;
     }

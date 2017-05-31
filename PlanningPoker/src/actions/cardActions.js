@@ -7,3 +7,7 @@ export function selectCard(selection){
 export function removeCard(selection) {
     return { type: types.REMOVE_CARD, UserId: selection.UserId };
 }
+
+export function resetTable(selection) {
+    return { type: types.RESET_TABLE, ResetTable: selection.ResetTable };
+}

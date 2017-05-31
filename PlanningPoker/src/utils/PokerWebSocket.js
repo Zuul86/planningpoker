@@ -18,6 +18,10 @@ export default class PokerWebSocket {
                 case 'revealCards':
                     props.actions.screenActions.revealCards(response.Payload);
                     break;
+                case 'reset':
+                    props.actions.cardActions.resetTable(response.Payload);
+                    props.actions.screenActions.revealCards({ShowCards: false});
+                    break;
                 default:
                     throw new Error('unknown message');
             }

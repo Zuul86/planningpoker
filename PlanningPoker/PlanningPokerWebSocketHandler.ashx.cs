@@ -100,7 +100,12 @@ namespace PlanningPoker
                     await SendMessageAsync("cardSelection", new { Effort = messageObj.Value, UserId = id });
                     break;
                 case "reveal":
-                    await SendMessageAsync("revealCards", new { ShowCards = messageObj.Value });
+                    bool doReveal;
+                    bool.TryParse(messageObj.Value, out doReveal);
+                    await SendMessageAsync("revealCards", new { ShowCards = doReveal });
+                    break;
+                case "reset":
+                    await SendMessageAsync("reset", new { ResetTable = messageObj.Value });
                     break;
             }
         }

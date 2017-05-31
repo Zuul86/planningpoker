@@ -8,6 +8,7 @@ class TeamCards extends React.Component {
         
         this.state = { showEffort: false };
         this.toggleShowEffort = this.toggleShowEffort.bind(this);
+        this.resetTable = this.resetTable.bind(this);
     }
     groupCards(cards) {
         const groupedArray = [];
@@ -32,12 +33,17 @@ class TeamCards extends React.Component {
         this.props.onRevealClick(JSON.stringify({ type: 'reveal', value: true }));
     }
 
+    resetTable(){
+        this.props.onResetTableClick(JSON.stringify({ type: 'reset', value: true }));
+    }
+    
     render() {
         return (
             <div className="container">
                 <div className="row">
                     <div className="col-md-4">Number of team members: {this.props.numberOfClients}</div>
-                    <div className="col-md-4 col-md-offset-4 text-right"><input type="button" value="Reveal" onClick={this.toggleShowEffort} /></div>
+                    <div className="col-md-4 text-right"><input type="button" value="Reset" onClick={this.resetTable} /></div>
+                    <div className="col-md-4 text-right"><input type="button" value="Reveal" onClick={this.toggleShowEffort} /></div>
                 </div>
                 <div className="row">
                     <div className="col-md-12">
@@ -52,6 +58,7 @@ TeamCards.propTypes = {
     cards: PropTypes.array,
     numberOfClients: PropTypes.number,
     onRevealClick: PropTypes.func,
+    onResetTableClick: PropTypes.func,
     showCards: PropTypes.bool
 };
 
