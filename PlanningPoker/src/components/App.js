@@ -10,9 +10,6 @@ import * as clientActions from '../actions/clientActions';
 import * as screenActions from '../actions/screenActions';
 import '../../node_modules/bootstrap/dist/css/bootstrap.css';
 import '../../node_modules/bootstrap/dist/js/bootstrap';
-import '../../node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2';
-import '../../node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff';
-import '../../node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf';
 
 class Main extends React.Component {   
 

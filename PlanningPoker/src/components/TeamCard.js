@@ -1,10 +1,14 @@
 ﻿import React, { PropTypes } from 'react';
-import '../styles/teamcards.css';
+import '../styles/card.css';
 
 const TeamCard = ({ card, showEffort }) => {
-    return (<div className="teamcard">
-        {showEffort ? (card.Effort) : (<div className="glyphicon glyphicon-ok-circle" />)}
-        <span className="badge">{card.Count}</span>
+    return (<div className="card">
+        {showEffort ? card.Effort : <div className="glyphicon glyphicon-ok-circle" />}
+        {showEffort && 
+            <span className="badge">
+                {card.Count}
+            </span>
+        }
     </div>);
 };
 

@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react';
 import MyCard from './MyCard';
-import '../styles/mycards.css';
+import '../styles/panel.css';
 
 const MyCards = ({onCardClick}) => {
     return (

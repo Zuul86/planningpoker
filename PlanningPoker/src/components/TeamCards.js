@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import TeamCard from './TeamCard';
-import '../styles/teamcards.css';
+import '../styles/card.css';
 
 class TeamCards extends React.Component {
     constructor() {
@@ -17,6 +17,7 @@ class TeamCards extends React.Component {
                 item = item || {};
                 return item.Effort === card.Effort;
             });
+
             if (foundCard) {
                 foundCard.Count++;
             } else {
@@ -38,16 +39,20 @@ class TeamCards extends React.Component {
     }
     
     render() {
+        const groupedCards = this.groupCards(this.props.cards);
+        const revealEnabled = this.props.numberOfClients === this.props.cards.length;
         return (
             <div className="container">
                 <div className="row">
-                    <div className="col-md-4">Number of team members: {this.props.numberOfClients}</div>
-                    <div className="col-md-4 text-right"><input type="button" value="Reset" onClick={this.resetTable} /></div>
-                    <div className="col-md-4 text-right"><input type="button" value="Reveal" onClick={this.toggleShowEffort} /></div>
+                    <div className="col-md-6">Number of team members: {this.props.numberOfClients}</div>
+                    <div className="col-md-6 text-right">
+                        <input type="button" className="btn btn-danger" value="Reset" onClick={this.resetTable} />&nbsp; 
+                        <input type="button" className="btn btn-success" value="Reveal" onClick={this.toggleShowEffort} disabled={!revealEnabled} />
+                    </div>
                 </div>
                 <div className="row">
-                    <div className="col-md-12">
-                        {this.groupCards(this.props.cards).map(item => {
+                    <div className="col-md-12 text-center">
+                        {groupedCards.map(item => {
                             return (<TeamCard key={item.UserId.toString()} card={item} showEffort={this.props.showCards} />);
                         })}</div>
                 </div>
