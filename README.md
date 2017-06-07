@@ -1,2 +1,2 @@
 # planningpoker
-Planning poker for relative estimating in sprint refinement meetings.
+Planning poker for relative estimating in backlog refinement meetings.
