@@ -16,7 +16,7 @@ namespace PlanningPoker
     /// </summary>
     public class PlanningPokerWebSocketHandler : IHttpHandler
     {
-        private static readonly IDictionary<Guid, WebSocket> Clients = new Dictionary<Guid, WebSocket>();
+        private static readonly IDictionary<Guid, IDictionary<Guid, WebSocket>> Tables = new Dictionary<Guid, IDictionary<Guid, WebSocket>>();
 
         private static readonly ReaderWriterLockSlim Locker = new ReaderWriterLockSlim();
 
@@ -40,12 +40,27 @@ namespace PlanningPoker
         {
             var socket = context.WebSocket;
             var uniqueId = Guid.NewGuid();
+            Guid tableId;
             var clientConnected = false;
 
             Locker.EnterWriteLock();
             try
             {
-                Clients.Add(uniqueId, socket);
+                if(!Guid.TryParse(context.QueryString[0], out tableId))
+                {
+                    tableId = Guid.NewGuid();
+                }
+
+                if (Tables.ContainsKey(tableId))
+                {
+                    Tables[tableId].Add(uniqueId, socket);
+                    
+                }
+                else
+                {
+                    Tables.Add(tableId, new Dictionary<Guid, WebSocket> { { uniqueId, socket } });
+                }
+
                 clientConnected = true;
             }
             finally
@@ -59,7 +74,7 @@ namespace PlanningPoker
                 {
                     if (clientConnected)
                     {
-                        await SendMessageAsync("clientConnected", new { NumberOfClients = Clients.Count, UserId = uniqueId });
+                        await SendMessageAsync(tableId, "clientConnected", new { NumberOfClients = Tables[tableId].Count, UserId = uniqueId, TableId = tableId });
 
                         clientConnected = false;
                     }
@@ -67,7 +82,7 @@ namespace PlanningPoker
 
                     if (!string.IsNullOrEmpty(message))
                     {
-                        await ProcessMessage(message, uniqueId.ToString());
+                        await ProcessMessage(tableId, message, uniqueId.ToString());
                     }
                 }
                 else
@@ -75,8 +90,16 @@ namespace PlanningPoker
                     Locker.EnterWriteLock();
                     try
                     {
-                        Clients.Remove(uniqueId);
-                        await SendMessageAsync("clientDisconnected", new { NumberOfClients = Clients.Count, UserId = uniqueId });
+                        Guid.TryParse(context.QueryString[0], out tableId);
+                        if (tableId == null)
+                        {
+                            tableId = Guid.NewGuid();
+                        }
+
+                        var table = Tables[tableId];
+
+                        table.Remove(uniqueId);
+                        await SendMessageAsync(tableId, "clientDisconnected", new { NumberOfClients = table.Count, UserId = uniqueId });
                     }
                     finally
                     {
@@ -89,7 +112,7 @@ namespace PlanningPoker
             }
         }
 
-        private async Task ProcessMessage(string message, string id)
+        private async Task ProcessMessage(Guid tableId, string message, string id)
         {
             //check for empty message
             var serializer = new JavaScriptSerializer();
@@ -97,26 +120,26 @@ namespace PlanningPoker
             switch (messageObj.Type)
             {
                 case "effort":
-                    await SendMessageAsync("cardSelection", new { Effort = messageObj.Value, UserId = id });
+                    await SendMessageAsync(tableId, "cardSelection", new { Effort = messageObj.Value, UserId = id });
                     break;
                 case "reveal":
                     bool doReveal;
                     bool.TryParse(messageObj.Value, out doReveal);
-                    await SendMessageAsync("revealCards", new { ShowCards = doReveal });
+                    await SendMessageAsync(tableId, "revealCards", new { ShowCards = doReveal });
                     break;
                 case "reset":
-                    await SendMessageAsync("reset", new { ResetTable = messageObj.Value });
+                    await SendMessageAsync(tableId, "reset", new { ResetTable = messageObj.Value });
                     break;
             }
         }
 
-        private async Task SendMessageAsync(string messsage, object payload)
+        private async Task SendMessageAsync(Guid tableId, string messsage, object payload)
         {
             var serializer = new JavaScriptSerializer();
 
             var message = serializer.Serialize(new { Message = messsage, Payload = payload });
             var buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(message));
-            foreach (var client in Clients)
+            foreach (var client in Tables[tableId])
             {
                 await client.Value.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
             }
