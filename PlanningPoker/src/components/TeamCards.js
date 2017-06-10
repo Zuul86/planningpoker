@@ -10,6 +10,7 @@ class TeamCards extends React.Component {
         this.toggleShowEffort = this.toggleShowEffort.bind(this);
         this.resetTable = this.resetTable.bind(this);
     }
+
     groupCards(cards) {
         const groupedArray = [];
         cards.forEach((card) => {
@@ -56,9 +57,20 @@ class TeamCards extends React.Component {
                             return (<TeamCard key={item.UserId.toString()} card={item} showEffort={this.props.showCards} />);
                         })}</div>
                 </div>
+                {/*<div className="row">
+                    <div className="col-md-12 text-center">
+                        <span className="glyphicon glyphicon-menu-up" style={shareDisplayButton} />
+                    </div>
+                </div>*/}
             </div>);
     }
 }
+
+const shareDisplayButton = {
+    border: 'solid black thin',
+    width: '5em'
+};
+
 TeamCards.propTypes = {
     cards: PropTypes.array,
     numberOfClients: PropTypes.number,

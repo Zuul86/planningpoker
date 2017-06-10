@@ -179,6 +179,8 @@
     <Content Include="src\components\TeamCard.js" />
     <Content Include="src\reducers\clientReducer.js" />
     <Content Include="src\reducers\screenReducer.js" />
+    <Content Include="src\styles\card.css" />
+    <Content Include="src\styles\panel.css" />
     <Content Include="webpack.config.dev.js" />
     <Content Include="webpack.config.prod.js" />
     <None Include="src\actions\actionTypes.js" />
@@ -197,16 +199,12 @@
     <None Include="src\store\configureStore.dev.js" />
     <None Include="src\store\configureStore.js" />
     <None Include="src\store\configureStore.prod.js" />
-    <None Include="src\styles\mycard.css" />
-    <None Include="src\styles\mycards.css" />
-    <None Include="src\styles\top.css" />
     <None Include="tools\build.js" />
     <None Include="tools\buildHtml.js" />
     <None Include="tools\distServer.js" />
     <None Include="tools\srcServer.js" />
     <None Include="tools\startMessage.js" />
     <None Include="tools\testSetup.js" />
-    <Content Include="src\styles\teamcards.css" />
     <Content Include="src\utils\PokerWebSocket.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">

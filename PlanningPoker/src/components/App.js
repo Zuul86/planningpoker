@@ -15,14 +15,20 @@ class Main extends React.Component {
 
     componentWillMount(){
         this.socket = this.socket || new PokerWebSocket(this.props);
-        this.send = (x) => this.socket.sendMessage(x);
+        this.send = (x) => {
+            this.socket.sendMessage(x);
+            const message = JSON.parse(x);
+            if (message.type === 'effort') {
+                this.selectedCard = message.value;
+            }
+        };
     }
 
     render(){
         return(
             <div>
                 <TeamCards cards={this.props.cards} numberOfClients={this.props.numberOfClients} showCards={this.props.screen.showCards} onRevealClick={this.send} onResetTableClick={this.send} />
-                <MyCards onCardClick={this.send} />
+                <MyCards onCardClick={this.send} selectedCard={this.selectedCard} />
             </div>
         );
     }
