@@ -4,12 +4,14 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import MyCards from './MyCards';
 import TeamCards from './TeamCards';
+import ShareTable from './ShareTable';
 import PokerWebSocket from '../utils/PokerWebSocket';
 import * as cardActions from '../actions/cardActions';
 import * as clientActions from '../actions/clientActions';
 import * as screenActions from '../actions/screenActions';
 import '../../node_modules/bootstrap/dist/css/bootstrap.css';
 import '../../node_modules/bootstrap/dist/js/bootstrap';
+import '../styles/panel.css';
 
 class Main extends React.Component {   
 
@@ -28,7 +30,10 @@ class Main extends React.Component {
         return(
             <div>
                 <TeamCards cards={this.props.cards} numberOfClients={this.props.numberOfClients} showCards={this.props.screen.showCards} onRevealClick={this.send} onResetTableClick={this.send} />
-                <MyCards onCardClick={this.send} selectedCard={this.selectedCard} />
+                <div className="bottom">
+                    <ShareTable />
+                    <MyCards onCardClick={this.send} selectedCard={this.selectedCard} />
+                </div>
             </div>
         );
     }

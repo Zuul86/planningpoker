@@ -57,19 +57,9 @@ class TeamCards extends React.Component {
                             return (<TeamCard key={item.UserId.toString()} card={item} showEffort={this.props.showCards} />);
                         })}</div>
                 </div>
-                {/*<div className="row">
-                    <div className="col-md-12 text-center">
-                        <span className="glyphicon glyphicon-menu-up" style={shareDisplayButton} />
-                    </div>
-                </div>*/}
             </div>);
     }
 }
-
-const shareDisplayButton = {
-    border: 'solid black thin',
-    width: '5em'
-};
 
 TeamCards.propTypes = {
     cards: PropTypes.array,
