@@ -4,7 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planning Poker</title>
-    <script type = 'text/javascript' >
+    @RenderSection("styles", required: false)
+</head>
+<body>
+    <div>
+        @RenderBody()
+    </div>
+    @RenderSection("scripts", required: false)
+    <script type='text/javascript'>
         var appInsights=window.appInsights||function(config)
         {
             function r(config){ t[config] = function(){ var i = arguments; t.queue.push(function(){ t[config].apply(t, i)})} }
@@ -12,15 +19,9 @@
         }({
             instrumentationKey:'7e201f9a-f3f5-4de7-a642-0ccffe7c6718'
         });
-        
+
         window.appInsights=appInsights;
         appInsights.trackPageView();
     </script>
-</head>
-<body>
-    <div>
-        @RenderBody()
-    </div>
-    @RenderSection("scripts", required: false)
 </body>
 </html>
