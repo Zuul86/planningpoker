@@ -262,3 +262,7 @@ __pycache__/
 
 # Javascript build files
 dist/
+
+# Istanbul coverage report files
+coverage/
+.nyc_output/

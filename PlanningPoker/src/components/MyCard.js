@@ -7,7 +7,9 @@ class MyCard extends React.Component {
         this.handleClick = this.handleClick.bind(this);
     }
 
-    selectedClass() { return this.props.selectedCard === this.props.cardNumber ? 'card selectable cardSelected': 'card selectable'; }
+    selectedClass() { 
+        return this.props.selectedCard === this.props.cardNumber ? 'card selectable cardSelected': 'card selectable'; 
+    }
 
     handleClick() {
         this.props.onCardClick(JSON.stringify({ type: 'effort', value: this.props.cardNumber }));
