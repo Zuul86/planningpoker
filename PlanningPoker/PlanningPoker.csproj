@@ -175,10 +175,14 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="src\actions\clientActions.js" />
     <Content Include="src\actions\screenActions.js" />
+    <Content Include="src\components\MyCard.test.js" />
     <Content Include="src\components\Root.js" />
+    <Content Include="src\components\ShareTable.js" />
     <Content Include="src\components\TeamCard.js" />
+    <Content Include="src\components\TeamCard.test.js" />
     <Content Include="src\reducers\clientReducer.js" />
     <Content Include="src\reducers\screenReducer.js" />
+    <Content Include="src\reducers\tableReducer.js" />
     <Content Include="src\styles\card.css" />
     <Content Include="src\styles\panel.css" />
     <Content Include="webpack.config.dev.js" />

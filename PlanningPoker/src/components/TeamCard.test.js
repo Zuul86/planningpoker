@@ -23,7 +23,7 @@ describe('<TeamCard />', () => {
 
      it('shows effort', () =>{
         const card = { Effort: 5 };
-        const wrapper = shallow(<TeamCard card={card} showEffort={true} />);
+        const wrapper = shallow(<TeamCard card={card} showEffort />);
         const actual = wrapper.find('div').first().text();
 
         expect(actual).toBe('5');
@@ -31,7 +31,7 @@ describe('<TeamCard />', () => {
 
     it('shows count badge', () => {
         const card = { Effort: 5, Count: 3 }; 
-        const wrapper = shallow(<TeamCard card={card} showEffort={true} />);
+        const wrapper = shallow(<TeamCard card={card} showEffort />);
         const actual = wrapper.find('span').first().text();
 
         expect(actual).toBe('3');

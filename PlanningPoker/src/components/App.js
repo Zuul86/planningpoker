@@ -29,7 +29,7 @@ class Main extends React.Component {
     render(){
         return(
             <div>
-                <TeamCards cards={this.props.cards} numberOfClients={this.props.numberOfClients} showCards={this.props.screen.showCards} onRevealClick={this.send} onResetTableClick={this.send} />
+                <TeamCards cards={this.props.cards} numberOfClients={this.props.numberOfClients} showCards={this.props.screen.showCards} table={this.props.table} onRevealClick={this.send} onResetTableClick={this.send} />
                 <div className="bottom">
                     <ShareTable />
                     <MyCards onCardClick={this.send} selectedCard={this.selectedCard} />
@@ -49,7 +49,8 @@ function mapStateToProps(state = { screen: {} }) {
     return {
         cards: state.cards || [],
         numberOfClients: state.clients,
-        screen: state.screen
+        screen: state.screen,
+        table: state.table
     };
 }
 

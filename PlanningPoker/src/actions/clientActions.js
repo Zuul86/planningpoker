@@ -1,7 +1,7 @@
 import * as types from './actionTypes';
 
 export function clientConnected(connection) {
-    return { type: types.CLIENT_CONNECTED, NumberOfClients: connection.NumberOfClients, UserId: connection.UserId};
+    return { type: types.CLIENT_CONNECTED, NumberOfClients: connection.NumberOfClients, UserId: connection.UserId, TableId: connection.TableId };
 }
 
 export function clientDisconnected(connection) {
