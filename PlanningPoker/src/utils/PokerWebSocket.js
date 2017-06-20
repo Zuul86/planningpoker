@@ -1,6 +1,9 @@
 export default class PokerWebSocket {
     constructor(props) {
-        const tableId = "?" + props.match.params.id;
+        let tableId = '';
+        if (props.match.params.id) {
+            tableId = "?" + props.match.params.id
+        }
         this.socket = new WebSocket('ws://' + window.location.host + '/PlanningPokerWebSocketHandler.ashx' + tableId);
         
         this.socket.addEventListener('message', function (event) {

@@ -16,7 +16,7 @@ namespace PlanningPoker
     /// </summary>
     public class PlanningPokerWebSocketHandler : IHttpHandler
     {
-        private static readonly IDictionary<Guid, IDictionary<Guid, WebSocket>> Tables = new Dictionary<Guid, IDictionary<Guid, WebSocket>>();
+        private static readonly IDictionary<string, IDictionary<Guid, WebSocket>> Tables = new Dictionary<string, IDictionary<Guid, WebSocket>>();
 
         private static readonly ReaderWriterLockSlim Locker = new ReaderWriterLockSlim();
 
@@ -40,15 +40,15 @@ namespace PlanningPoker
         {
             var socket = context.WebSocket;
             var uniqueId = Guid.NewGuid();
-            Guid tableId;
+            string tableId = context.QueryString.Count > 0 ? context.QueryString[0] : string.Empty;
             var clientConnected = false;
 
             Locker.EnterWriteLock();
             try
             {
-                if(!Guid.TryParse(context.QueryString[0], out tableId))
+                if(string.IsNullOrEmpty(tableId))
                 {
-                    tableId = Guid.NewGuid();
+                    tableId = GenerateShortUniqueId();
                 }
 
                 if (Tables.ContainsKey(tableId))
@@ -90,10 +90,9 @@ namespace PlanningPoker
                     Locker.EnterWriteLock();
                     try
                     {
-                        Guid.TryParse(context.QueryString[0], out tableId);
-                        if (tableId == null)
+                        if (string.IsNullOrEmpty(tableId))
                         {
-                            tableId = Guid.NewGuid();
+                            tableId = GenerateShortUniqueId();
                         }
 
                         var table = Tables[tableId];
@@ -112,7 +111,21 @@ namespace PlanningPoker
             }
         }
 
-        private async Task ProcessMessage(Guid tableId, string message, string id)
+        private string GenerateShortUniqueId()
+        {
+            var base62chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".ToCharArray();
+
+            var _random = new Random();
+
+            var sb = new StringBuilder(6);
+
+            for (int i = 0; i < 6; i++)
+                sb.Append(base62chars[_random.Next(36)]);
+
+            return sb.ToString();
+        }
+
+        private async Task ProcessMessage(string tableId, string message, string id)
         {
             //check for empty message
             var serializer = new JavaScriptSerializer();
@@ -133,7 +146,7 @@ namespace PlanningPoker
             }
         }
 
-        private async Task SendMessageAsync(Guid tableId, string messsage, object payload)
+        private async Task SendMessageAsync(string tableId, string messsage, object payload)
         {
             var serializer = new JavaScriptSerializer();
 
