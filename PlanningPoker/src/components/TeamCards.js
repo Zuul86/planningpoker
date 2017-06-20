@@ -67,7 +67,8 @@ TeamCards.propTypes = {
     numberOfClients: PropTypes.number,
     onRevealClick: PropTypes.func,
     onResetTableClick: PropTypes.func,
-    showCards: PropTypes.bool
+    showCards: PropTypes.bool,
+    table: PropTypes.string
 };
 
 export default TeamCards;

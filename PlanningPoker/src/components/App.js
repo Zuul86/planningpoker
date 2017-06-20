@@ -42,7 +42,8 @@ class Main extends React.Component {
 Main.propTypes = {
     cards: PropTypes.array,
     numberOfClients: PropTypes.number,
-    screen: PropTypes.object
+    screen: PropTypes.object,
+    table: PropTypes.string
 };
 
 function mapStateToProps(state = { screen: {} }) {
