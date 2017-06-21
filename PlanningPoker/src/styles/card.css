@@ -1,4 +1,8 @@
-﻿.card {
+﻿.container{
+    margin-top: 15px;
+}
+
+.card {
     position: relative;
     border: thin solid black;
     width: 1.65em;
@@ -26,7 +30,12 @@
             background: green;
             border: thin black solid;
             text-shadow: 1px 1px 5px black;
+            font-size: 20pt;
         }
+
+.large {
+    font-size: 56pt;
+}
 
 .selectable {
     cursor: pointer;

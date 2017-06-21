@@ -2,7 +2,7 @@
 import '../styles/card.css';
 
 const TeamCard = ({ card, showEffort }) => {
-    return (<div className="card">
+    return (<div className="card large">
         {showEffort ? card.Effort : <div className="glyphicon glyphicon-ok-circle" />}
         {showEffort && 
             <span className="badge">

@@ -1,6 +1,7 @@
 .status{
     display: flex;
     height: 8px;
+    margin: 25px;
 }
 .status > div {
     border: solid grey thin;
