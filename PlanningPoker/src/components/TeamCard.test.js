@@ -8,7 +8,7 @@ describe('TeamCard component', () => {
         const card = {};
         const wrapper = shallow(<TeamCard card={card} showEffort={false} />);
         const actual = wrapper.find('div').first().prop('className');
-        const expected = 'card';
+        const expected = 'card large';
 
         expect(actual).toBe(expected);
     });
