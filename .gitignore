@@ -266,3 +266,6 @@ dist/
 # Istanbul coverage report files
 coverage/
 .nyc_output/
+
+# VSTS Test Reporter
+*.trx
