@@ -21,6 +21,8 @@ class Main extends React.Component {
             const message = JSON.parse(x);
             if (message.type === 'effort') {
                 this.selectedCard = message.value;
+            } else if (message.type === 'reset') {
+                this.selectedCard = 0;
             }
         };
     }
