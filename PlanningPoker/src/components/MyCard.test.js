@@ -4,7 +4,7 @@ import {shallow} from 'enzyme';
 import sinon from 'sinon';
 import MyCard from './MyCard';
 
-describe('<MyCard />', () => {
+describe('MyCard component', () => {
     it('displays card number', () => {
         const wrapper = shallow(<MyCard cardNumber={5} />);
         const actual = wrapper.find('div').first().text();

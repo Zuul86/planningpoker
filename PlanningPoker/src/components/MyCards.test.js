@@ -3,7 +3,7 @@ import React from 'react';
 import {shallow} from 'enzyme';
 import MyCards from './MyCards';
 
-describe('<MyCards />', () => {
+describe('MyCards component', () => {
     it('should have a class called bottom-panel', () => {
         const wrapper = shallow(<MyCards cards={[1, 2, 3]} />);
         const actual = wrapper.find('div').prop('className');

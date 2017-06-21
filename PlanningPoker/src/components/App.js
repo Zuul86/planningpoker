@@ -4,7 +4,6 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import MyCards from './MyCards';
 import TeamCards from './TeamCards';
-import ShareTable from './ShareTable';
 import PokerWebSocket from '../utils/PokerWebSocket';
 import * as cardActions from '../actions/cardActions';
 import * as clientActions from '../actions/clientActions';
@@ -31,7 +30,6 @@ class Main extends React.Component {
             <div>
                 <TeamCards cards={this.props.cards} numberOfClients={this.props.numberOfClients} showCards={this.props.screen.showCards} table={this.props.table} onRevealClick={this.send} onResetTableClick={this.send} />
                 <div className="bottom">
-                    <ShareTable />
                     <MyCards onCardClick={this.send} selectedCard={this.selectedCard} />
                 </div>
             </div>

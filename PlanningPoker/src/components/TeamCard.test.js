@@ -3,7 +3,7 @@ import React from 'react';
 import {shallow} from 'enzyme';
 import TeamCard from './TeamCard';
 
-describe('<TeamCard />', () => {
+describe('TeamCard component', () => {
     it('is styled', () => {
         const card = {};
         const wrapper = shallow(<TeamCard card={card} showEffort={false} />);

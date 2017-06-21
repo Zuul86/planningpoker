@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import TeamCard from './TeamCard';
+import PlayerStatus from './PlayerStatus';
 import '../styles/card.css';
 
 class TeamCards extends React.Component {
@@ -50,6 +51,11 @@ class TeamCards extends React.Component {
                     <div className="col-md-4 text-right">
                         <input type="button" className="btn btn-danger" value="Reset" onClick={this.resetTable} />&nbsp; 
                         <input type="button" className="btn btn-success" value="Reveal" onClick={this.toggleShowEffort} disabled={!revealEnabled} />
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-12">
+                        <PlayerStatus numberOfPlayers={this.props.numberOfClients} numberOfSelected={this.props.cards.length} />
                     </div>
                 </div>
                 <div className="row">
