@@ -18,6 +18,8 @@ namespace PlanningPoker
     {
         private static readonly IDictionary<string, IDictionary<Guid, WebSocket>> Tables = new Dictionary<string, IDictionary<Guid, WebSocket>>();
 
+        private static readonly IDictionary<string, IList<CardSelection>> CardSelections = new Dictionary<string, IList<CardSelection>>();
+
         private static readonly ReaderWriterLockSlim Locker = new ReaderWriterLockSlim();
 
         public void ProcessRequest(HttpContext context)
@@ -74,8 +76,14 @@ namespace PlanningPoker
                 {
                     if (clientConnected)
                     {
-                        await SendMessageAsync(tableId, "clientConnected", new { NumberOfClients = Tables[tableId].Count, UserId = uniqueId, TableId = tableId });
-
+                        await BroadcastMessageAsync(tableId, "clientConnected", new { NumberOfClients = Tables[tableId].Count, UserId = uniqueId, TableId = tableId });
+                        if (CardSelections.ContainsKey(tableId))
+                        {
+                            foreach (var item in CardSelections[tableId])
+                            {
+                                await SendMessageAsync(socket, tableId, "cardSelection", item);
+                            }
+                        }
                         clientConnected = false;
                     }
                     var message = await ReceiveMessageAsync(socket);
@@ -98,7 +106,8 @@ namespace PlanningPoker
                         var table = Tables[tableId];
 
                         table.Remove(uniqueId);
-                        await SendMessageAsync(tableId, "clientDisconnected", new { NumberOfClients = table.Count, UserId = uniqueId });
+                        
+                        await BroadcastMessageAsync(tableId, "clientDisconnected", new { NumberOfClients = table.Count, UserId = uniqueId });
                     }
                     finally
                     {
@@ -127,35 +136,59 @@ namespace PlanningPoker
 
         private async Task ProcessMessage(string tableId, string message, string id)
         {
-            //check for empty message
             var serializer = new JavaScriptSerializer();
             var messageObj = serializer.Deserialize<SocketMessage>(message);
             switch (messageObj.Type)
             {
                 case "effort":
-                    await SendMessageAsync(tableId, "cardSelection", new { Effort = messageObj.Value, UserId = id });
+                    var cardSelection = new CardSelection { Effort = messageObj.Value, UserId = id };
+                    await BroadcastMessageAsync(tableId, "cardSelection", cardSelection);
+                    StoreCardSelection(tableId, cardSelection);
                     break;
                 case "reveal":
                     bool doReveal;
                     bool.TryParse(messageObj.Value, out doReveal);
-                    await SendMessageAsync(tableId, "revealCards", new { ShowCards = doReveal });
+                    await BroadcastMessageAsync(tableId, "revealCards", new { ShowCards = doReveal });
                     break;
                 case "reset":
-                    await SendMessageAsync(tableId, "reset", new { ResetTable = messageObj.Value });
+                    await BroadcastMessageAsync(tableId, "reset", new { ResetTable = messageObj.Value });
+                    ClearCardSelections(tableId);
                     break;
             }
         }
+        
+        private async Task BroadcastMessageAsync(string tableId, string message, object payload)
+        {
+            foreach (var client in Tables[tableId])
+            {
+                await SendMessageAsync(client.Value, tableId, message, payload);
+            }
+        }
 
-        private async Task SendMessageAsync(string tableId, string messsage, object payload)
+        private async Task SendMessageAsync(WebSocket socket, string tableId, string messsage, object payload)
         {
             var serializer = new JavaScriptSerializer();
 
             var message = serializer.Serialize(new { Message = messsage, Payload = payload });
             var buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(message));
-            foreach (var client in Tables[tableId])
+            await socket.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+        }
+
+        private void StoreCardSelection(string tableId, CardSelection cardSelection)
+        {
+            if (CardSelections.ContainsKey(tableId))
             {
-                await client.Value.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                CardSelections[tableId].Add(cardSelection);
             }
+            else
+            {
+                CardSelections.Add(tableId, new List<CardSelection> { cardSelection });
+            }
+        }
+
+        private void ClearCardSelections(string tableId)
+        {
+            CardSelections[tableId].Clear();
         }
 
         private async Task<string> ReceiveMessageAsync(WebSocket socket)
@@ -179,5 +212,10 @@ namespace PlanningPoker
                 }
             }
         }
+    }
+
+    public class CardSelection{
+        public string Effort { get; set; }
+        public string UserId { get; set; }
     }
 }
