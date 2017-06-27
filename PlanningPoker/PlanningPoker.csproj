@@ -161,8 +161,10 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="ICardSelections.cs" />
+    <Compile Include="IMessageExchanger.cs" />
     <Compile Include="IPokerTables.cs" />
     <Compile Include="IUniqueIdGenerator.cs" />
+    <Compile Include="MessageExchanger.cs" />
     <Compile Include="PlanningPokerWebSocketHandler.ashx.cs">
       <DependentUpon>PlanningPokerWebSocketHandler.ashx</DependentUpon>
     </Compile>
