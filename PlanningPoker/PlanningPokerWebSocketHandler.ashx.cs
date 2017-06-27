@@ -16,11 +16,19 @@ namespace PlanningPoker
     /// </summary>
     public class PlanningPokerWebSocketHandler : IHttpHandler
     {
-        private static readonly IDictionary<string, IDictionary<Guid, WebSocket>> Tables = new Dictionary<string, IDictionary<Guid, WebSocket>>();
+        private readonly IPokerTables _tables;
+        private readonly ICardSelections _selections;
 
-        private static readonly IDictionary<string, IList<CardSelection>> CardSelections = new Dictionary<string, IList<CardSelection>>();
+        public PlanningPokerWebSocketHandler() : this(new PokerTables(), new CardSelections())
+        {
+            
+        }
 
-        private static readonly ReaderWriterLockSlim Locker = new ReaderWriterLockSlim();
+        public PlanningPokerWebSocketHandler(IPokerTables tables, ICardSelections selections)
+        {
+            _tables = tables;
+            _selections = selections;
+        }
 
         public void ProcessRequest(HttpContext context)
         {
@@ -30,45 +38,21 @@ namespace PlanningPoker
             }
         }
 
-        public bool IsReusable
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public bool IsReusable { get { return false; } }
 
         private async Task ProcessRequestInternal(AspNetWebSocketContext context)
         {
             var socket = context.WebSocket;
-            var uniqueId = Guid.NewGuid();
-            string tableId = context.QueryString.Count > 0 ? context.QueryString[0] : string.Empty;
-            var clientConnected = false;
 
-            Locker.EnterWriteLock();
-            try
-            {
-                if(string.IsNullOrEmpty(tableId))
-                {
-                    tableId = GenerateShortUniqueId();
-                }
+            var userId = Guid.NewGuid();
 
-                if (Tables.ContainsKey(tableId))
-                {
-                    Tables[tableId].Add(uniqueId, socket);
-                    
-                }
-                else
-                {
-                    Tables.Add(tableId, new Dictionary<Guid, WebSocket> { { uniqueId, socket } });
-                }
+            string tableIdInput = context.QueryString.Count > 0 ? context.QueryString[0] : string.Empty;
 
-                clientConnected = true;
-            }
-            finally
-            {
-                Locker.ExitWriteLock();
-            }
+            var clientConnected = false; 
+
+            var tableId = _tables.AddUserToTable(tableIdInput, userId, socket);
+
+            clientConnected = true;
 
             while (true)
             {
@@ -76,10 +60,10 @@ namespace PlanningPoker
                 {
                     if (clientConnected)
                     {
-                        await BroadcastMessageAsync(tableId, "clientConnected", new { NumberOfClients = Tables[tableId].Count, UserId = uniqueId, TableId = tableId });
-                        if (CardSelections.ContainsKey(tableId))
+                        await BroadcastMessageAsync(tableId, "clientConnected", new { NumberOfClients = _tables.Tables[tableId].Count, UserId = userId, TableId = tableId });
+                        if (_selections.Selections.ContainsKey(tableId))
                         {
-                            foreach (var item in CardSelections[tableId])
+                            foreach (var item in _selections.Selections[tableId])
                             {
                                 await SendMessageAsync(socket, tableId, "cardSelection", item);
                             }
@@ -90,48 +74,16 @@ namespace PlanningPoker
 
                     if (!string.IsNullOrEmpty(message))
                     {
-                        await ProcessMessage(tableId, message, uniqueId.ToString());
+                        await ProcessMessage(tableId, message, userId.ToString());
                     }
                 }
                 else
                 {
-                    Locker.EnterWriteLock();
-                    try
-                    {
-                        if (string.IsNullOrEmpty(tableId))
-                        {
-                            tableId = GenerateShortUniqueId();
-                        }
-
-                        var table = Tables[tableId];
-
-                        table.Remove(uniqueId);
-                        
-                        await BroadcastMessageAsync(tableId, "clientDisconnected", new { NumberOfClients = table.Count, UserId = uniqueId });
-                    }
-                    finally
-                    {
-                        Locker.ExitWriteLock();
-                    }
-
+                    var table = _tables.RemoveTable(tableId, userId);
+                    await BroadcastMessageAsync(tableId, "clientDisconnected", new { NumberOfClients = table.Count, UserId = userId });
                     break;
-
                 }
             }
-        }
-
-        private string GenerateShortUniqueId()
-        {
-            var base62chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".ToCharArray();
-
-            var _random = new Random();
-
-            var sb = new StringBuilder(6);
-
-            for (int i = 0; i < 6; i++)
-                sb.Append(base62chars[_random.Next(36)]);
-
-            return sb.ToString();
         }
 
         private async Task ProcessMessage(string tableId, string message, string id)
@@ -143,7 +95,7 @@ namespace PlanningPoker
                 case "effort":
                     var cardSelection = new CardSelection { Effort = messageObj.Value, UserId = id };
                     await BroadcastMessageAsync(tableId, "cardSelection", cardSelection);
-                    StoreCardSelection(tableId, cardSelection);
+                    _selections.StoreCardSelection(tableId, cardSelection);
                     break;
                 case "reveal":
                     bool doReveal;
@@ -152,14 +104,14 @@ namespace PlanningPoker
                     break;
                 case "reset":
                     await BroadcastMessageAsync(tableId, "reset", new { ResetTable = messageObj.Value });
-                    ClearCardSelections(tableId);
+                    _selections.ClearCardSelections(tableId);
                     break;
             }
         }
         
         private async Task BroadcastMessageAsync(string tableId, string message, object payload)
         {
-            foreach (var client in Tables[tableId])
+            foreach (var client in _tables.Tables[tableId])
             {
                 await SendMessageAsync(client.Value, tableId, message, payload);
             }
@@ -172,23 +124,6 @@ namespace PlanningPoker
             var message = serializer.Serialize(new { Message = messsage, Payload = payload });
             var buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(message));
             await socket.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
-        }
-
-        private void StoreCardSelection(string tableId, CardSelection cardSelection)
-        {
-            if (CardSelections.ContainsKey(tableId))
-            {
-                CardSelections[tableId].Add(cardSelection);
-            }
-            else
-            {
-                CardSelections.Add(tableId, new List<CardSelection> { cardSelection });
-            }
-        }
-
-        private void ClearCardSelections(string tableId)
-        {
-            CardSelections[tableId].Clear();
         }
 
         private async Task<string> ReceiveMessageAsync(WebSocket socket)
@@ -212,10 +147,5 @@ namespace PlanningPoker
                 }
             }
         }
-    }
-
-    public class CardSelection{
-        public string Effort { get; set; }
-        public string UserId { get; set; }
     }
 }

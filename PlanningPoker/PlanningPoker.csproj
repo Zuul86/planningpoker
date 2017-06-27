@@ -153,16 +153,23 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="CardSelection.cs" />
+    <Compile Include="CardSelections.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="ErrorHandler\AiHandleErrorAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="ICardSelections.cs" />
+    <Compile Include="IPokerTables.cs" />
+    <Compile Include="IUniqueIdGenerator.cs" />
     <Compile Include="PlanningPokerWebSocketHandler.ashx.cs">
       <DependentUpon>PlanningPokerWebSocketHandler.ashx</DependentUpon>
     </Compile>
+    <Compile Include="PokerTables.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SocketMessage.cs" />
+    <Compile Include="UniqueIdGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />
