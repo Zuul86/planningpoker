@@ -165,6 +165,12 @@
     <Compile Include="IPokerTables.cs" />
     <Compile Include="IUniqueIdGenerator.cs" />
     <Compile Include="MessageExchanger.cs" />
+    <Compile Include="MessageProcessor.cs" />
+    <Compile Include="Messages\EffortMessage.cs" />
+    <Compile Include="Messages\IMessage.cs" />
+    <Compile Include="Messages\IMessageProcessor.cs" />
+    <Compile Include="Messages\ResetMessage.cs" />
+    <Compile Include="Messages\RevealMessage.cs" />
     <Compile Include="PlanningPokerWebSocketHandler.ashx.cs">
       <DependentUpon>PlanningPokerWebSocketHandler.ashx</DependentUpon>
     </Compile>

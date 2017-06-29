@@ -4,7 +4,6 @@
     using System.Net.WebSockets;
     using System.Threading.Tasks;
     using System.Web;
-    using System.Web.Script.Serialization;
     using System.Web.WebSockets;
 
     public class PlanningPokerWebSocketHandler : IHttpHandler
@@ -48,7 +47,7 @@
             var tableId = _tables.AddUserToTable(tableIdInput, userId, socket);
 
             clientConnected = true;
-
+            var messageProcessor = new MessageProcessor(tableId, _tables);
             while (true)
             {
                 if (socket.State == WebSocketState.Open)
@@ -67,10 +66,7 @@
                     }
                     var message = await _messageExchanger.ReceiveMessageAsync(socket);
 
-                    if (!string.IsNullOrEmpty(message))
-                    {
-                        await ProcessMessage(tableId, message, userId.ToString());
-                    }
+                    await messageProcessor.ProcessMessageAsync(message, userId.ToString(), _selections);
                 }
                 else
                 {
@@ -78,27 +74,6 @@
                     await _messageExchanger.BroadcastMessageAsync(tableId, "clientDisconnected", new { NumberOfClients = table.Count, UserId = userId }, _tables);
                     break;
                 }
-            }
-        }
-
-        private async Task ProcessMessage(string tableId, string message, string id)
-        {
-            var serializer = new JavaScriptSerializer();
-            var messageObj = serializer.Deserialize<SocketMessage>(message);
-            switch (messageObj.Type)
-            {
-                case "effort":
-                    var cardSelection = new CardSelection { Effort = messageObj.Value, UserId = id };
-                    await _messageExchanger.BroadcastMessageAsync(tableId, "cardSelection", cardSelection, _tables);
-                    _selections.StoreCardSelection(tableId, cardSelection);
-                    break;
-                case "reveal":
-                    await _messageExchanger.BroadcastMessageAsync(tableId, "revealCards", new { ShowCards = messageObj.Value }, _tables);
-                    break;
-                case "reset":
-                    await _messageExchanger.BroadcastMessageAsync(tableId, "reset", new { ResetTable = messageObj.Value }, _tables);
-                    _selections.ClearCardSelections(tableId);
-                    break;
             }
         }
     }
