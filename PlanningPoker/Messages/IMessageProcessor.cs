@@ -1,9 +1,10 @@
 ﻿namespace PlanningPoker.Messages
 {
+    using System;
     using System.Threading.Tasks;
 
     public interface IMessageProcessor
     {
-        Task ProcessMessageAsync(string type, string userId, string tableId);
+        Task ProcessMessageAsync(string messagePayload, Guid userId, string tableId);
     }
 }

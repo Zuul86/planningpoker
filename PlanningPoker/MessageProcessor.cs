@@ -1,6 +1,7 @@
 ﻿namespace PlanningPoker
 {
     using PlanningPoker.Messages;
+    using System;
     using System.Threading.Tasks;
     using System.Web.Script.Serialization;
 
@@ -13,7 +14,7 @@
             _messageContainer = messageContainer;
         }
 
-        public async Task ProcessMessageAsync(string messagePayload, string userId, string tableId)
+        public async Task ProcessMessageAsync(string messagePayload, Guid userId, string tableId)
         {
             if (string.IsNullOrEmpty(messagePayload)) return;
 
@@ -24,7 +25,7 @@
             {
                 if (messageObj.Type == message.MessageType)
                 {
-                    await message.Execute(tableId, new { Value = messageObj.Value, UserId = userId });
+                    await message.Execute(tableId, new { Value = messageObj.Value, UserId = userId.ToString() });
                 }
             }
         }

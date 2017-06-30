@@ -38,41 +38,55 @@
 
             var userId = Guid.NewGuid();
 
-            string tableIdInput = context.QueryString.Count > 0 ? context.QueryString[0] : string.Empty;
-
-            var clientConnected = false; 
+            var tableIdInput = GetTableInput(context);
 
             var tableId = _tables.AddUserToTable(tableIdInput, userId, socket);
 
-            clientConnected = true;
+            var clientConnected = true;
 
             while (true)
             {
                 if (socket.State == WebSocketState.Open)
                 {
-                    if (clientConnected)
-                    {
-                        await _messageExchanger.BroadcastMessageAsync(tableId, "clientConnected", new { NumberOfClients = _tables.Tables[tableId].Count, UserId = userId, TableId = tableId });
-                        if (_selections.Selections.ContainsKey(tableId))
-                        {
-                            foreach (var item in _selections.Selections[tableId])
-                            {
-                                await _messageExchanger.SendMessageAsync(socket, "cardSelection", item);
-                            }
-                        }
-                        clientConnected = false;
-                    }
+                    await ProcessConnectedClientAsync(socket, tableId, userId, clientConnected);
+
                     var message = await _messageExchanger.ReceiveMessageAsync(socket);
 
-                    await _messageProcessor.ProcessMessageAsync(message, userId.ToString(), tableId);
+                    await _messageProcessor.ProcessMessageAsync(message, userId, tableId);
                 }
                 else
                 {
-                    var table = _tables.RemoveTable(tableId, userId);
-                    await _messageExchanger.BroadcastMessageAsync(tableId, "clientDisconnected", new { NumberOfClients = table.Count, UserId = userId });
+                    await ProcessDisconnectedClientAsync(tableId, userId);
                     break;
                 }
             }
+        }
+
+        private string GetTableInput(AspNetWebSocketContext context)
+        {
+            return context.QueryString.Count > 0 ? context.QueryString[0] : string.Empty;
+        }
+
+        private async Task ProcessConnectedClientAsync(WebSocket socket, string tableId, Guid userId, bool clientConnected)
+        {
+            if (clientConnected)
+            {
+                await _messageExchanger.BroadcastMessageAsync(tableId, "clientConnected", new { NumberOfClients = _tables.Tables[tableId].Count, UserId = userId, TableId = tableId });
+                if (_selections.Selections.ContainsKey(tableId))
+                {
+                    foreach (var item in _selections.Selections[tableId])
+                    {
+                        await _messageExchanger.SendMessageAsync(socket, "cardSelection", item);
+                    }
+                }
+                clientConnected = false;
+            }
+        }
+
+        private async Task ProcessDisconnectedClientAsync(string tableId, Guid userId)
+        {
+            var table = _tables.RemoveTable(tableId, userId);
+            await _messageExchanger.BroadcastMessageAsync(tableId, "clientDisconnected", new { NumberOfClients = table.Count, UserId = userId });
         }
     }
 }
