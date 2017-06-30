@@ -9,9 +9,9 @@
         {
             get
             {
-                yield return MvcApplication.Unity.Resolve<EffortMessage>();
-                yield return MvcApplication.Unity.Resolve<RevealMessage>();
-                yield return MvcApplication.Unity.Resolve<ResetMessage>();
+                yield return MvcApplication.Container.Resolve<EffortMessage>();
+                yield return MvcApplication.Container.Resolve<RevealMessage>();
+                yield return MvcApplication.Container.Resolve<ResetMessage>();
             }
         }
     }

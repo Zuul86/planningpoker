@@ -9,7 +9,7 @@ namespace PlanningPoker
         {
             if (url == "/PlanningPokerWebSocketHandler.ashx")
             {
-                return MvcApplication.Unity.Resolve<PlanningPokerWebSocketHandler>();
+                return MvcApplication.Container.Resolve<PlanningPokerWebSocketHandler>();
             }
             return null;
         }
