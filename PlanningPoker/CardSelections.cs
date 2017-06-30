@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace PlanningPoker
+﻿namespace PlanningPoker
 {
+    using System.Collections.Generic;
+
     public class CardSelections : ICardSelections
     {
         private static readonly IDictionary<string, IList<CardSelection>> _selections = new Dictionary<string, IList<CardSelection>>();
