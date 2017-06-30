@@ -10,6 +10,13 @@
 
     public class MessageExchanger : IMessageExchanger
     {
+        private readonly IPokerTables _tables;
+
+        public MessageExchanger(IPokerTables tables)
+        {
+            _tables = tables;
+        }
+
         public async Task SendMessageAsync(WebSocket socket, string messsage, object payload)
         {
             var serializer = new JavaScriptSerializer();
@@ -41,9 +48,9 @@
             }
         }
 
-        public async Task BroadcastMessageAsync(string tableId, string message, object payload, IPokerTables tables)
+        public async Task BroadcastMessageAsync(string tableId, string message, object payload)
         {
-            foreach (var client in tables.Tables[tableId])
+            foreach (var client in _tables.Tables[tableId])
             {
                 await SendMessageAsync(client.Value, message, payload);
             }

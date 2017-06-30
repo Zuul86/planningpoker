@@ -24,6 +24,7 @@
             Unity.RegisterType<ICardSelections, CardSelections>();
             Unity.RegisterType<IUniqueIdGenerator, UniqueIdGenerator>();
             Unity.RegisterType<IMessageProcessor, MessageProcessor>();
+            Unity.RegisterType<IMessageContainer, MessageContainer>();
         }
     }
 }

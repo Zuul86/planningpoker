@@ -13,9 +13,9 @@
 
         public string MessageType => "reveal";
 
-        public async Task Execute(string tableId, dynamic message, IPokerTables tables, ICardSelections selections)
+        public async Task Execute(string tableId, dynamic message)
         {
-            await _messageExchanger.BroadcastMessageAsync(tableId, "revealCards", new { ShowCards = message.Value }, tables);
+            await _messageExchanger.BroadcastMessageAsync(tableId, "revealCards", new { ShowCards = message.Value });
         }
     }
 }

@@ -52,7 +52,7 @@
                 {
                     if (clientConnected)
                     {
-                        await _messageExchanger.BroadcastMessageAsync(tableId, "clientConnected", new { NumberOfClients = _tables.Tables[tableId].Count, UserId = userId, TableId = tableId }, _tables);
+                        await _messageExchanger.BroadcastMessageAsync(tableId, "clientConnected", new { NumberOfClients = _tables.Tables[tableId].Count, UserId = userId, TableId = tableId });
                         if (_selections.Selections.ContainsKey(tableId))
                         {
                             foreach (var item in _selections.Selections[tableId])
@@ -64,12 +64,12 @@
                     }
                     var message = await _messageExchanger.ReceiveMessageAsync(socket);
 
-                    await _messageProcessor.ProcessMessageAsync(message, userId.ToString(), tableId, _selections);
+                    await _messageProcessor.ProcessMessageAsync(message, userId.ToString(), tableId);
                 }
                 else
                 {
                     var table = _tables.RemoveTable(tableId, userId);
-                    await _messageExchanger.BroadcastMessageAsync(tableId, "clientDisconnected", new { NumberOfClients = table.Count, UserId = userId }, _tables);
+                    await _messageExchanger.BroadcastMessageAsync(tableId, "clientDisconnected", new { NumberOfClients = table.Count, UserId = userId });
                     break;
                 }
             }

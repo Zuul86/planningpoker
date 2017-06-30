@@ -177,10 +177,12 @@
     <Compile Include="IMessageExchanger.cs" />
     <Compile Include="IPokerTables.cs" />
     <Compile Include="IUniqueIdGenerator.cs" />
+    <Compile Include="Messages\MessageContainer.cs" />
     <Compile Include="MessageExchanger.cs" />
     <Compile Include="MessageProcessor.cs" />
     <Compile Include="Messages\EffortMessage.cs" />
     <Compile Include="Messages\IMessage.cs" />
+    <Compile Include="Messages\IMessageContainer.cs" />
     <Compile Include="Messages\IMessageProcessor.cs" />
     <Compile Include="Messages\ResetMessage.cs" />
     <Compile Include="Messages\RevealMessage.cs" />
