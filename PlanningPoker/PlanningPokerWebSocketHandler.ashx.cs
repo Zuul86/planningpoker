@@ -1,5 +1,6 @@
 ﻿namespace PlanningPoker
 {
+    using PlanningPoker.Messages;
     using System;
     using System.Net.WebSockets;
     using System.Threading.Tasks;
@@ -11,17 +12,14 @@
         private readonly IPokerTables _tables;
         private readonly ICardSelections _selections;
         private readonly IMessageExchanger _messageExchanger;
+        private readonly IMessageProcessor _messageProcessor;
 
-        public PlanningPokerWebSocketHandler() : this(new PokerTables(), new CardSelections(), new MessageExchanger())
+        public PlanningPokerWebSocketHandler(IMessageExchanger messageExchanger, IMessageProcessor messageProcessor, IPokerTables tables, ICardSelections selections)
         {
-            
-        }
-
-        public PlanningPokerWebSocketHandler(IPokerTables tables, ICardSelections selections, IMessageExchanger messageExchanger)
-        {
+            _messageExchanger = messageExchanger;
+            _messageProcessor = messageProcessor;
             _tables = tables;
             _selections = selections;
-            _messageExchanger = messageExchanger;
         }
 
         public void ProcessRequest(HttpContext context)
@@ -47,7 +45,7 @@
             var tableId = _tables.AddUserToTable(tableIdInput, userId, socket);
 
             clientConnected = true;
-            var messageProcessor = new MessageProcessor(tableId, _tables);
+
             while (true)
             {
                 if (socket.State == WebSocketState.Open)
@@ -66,7 +64,7 @@
                     }
                     var message = await _messageExchanger.ReceiveMessageAsync(socket);
 
-                    await messageProcessor.ProcessMessageAsync(message, userId.ToString(), _selections);
+                    await _messageProcessor.ProcessMessageAsync(message, userId.ToString(), tableId, _selections);
                 }
                 else
                 {

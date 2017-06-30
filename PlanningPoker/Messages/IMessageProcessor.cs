@@ -4,6 +4,6 @@
 
     public interface IMessageProcessor
     {
-        Task ProcessMessageAsync(string type, string userId, ICardSelections selections);
+        Task ProcessMessageAsync(string type, string userId, string tableId);
     }
 }

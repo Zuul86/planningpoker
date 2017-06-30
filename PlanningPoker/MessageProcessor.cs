@@ -8,10 +8,10 @@
     public class MessageProcessor : IMessageProcessor
     {
         private readonly IList<IMessage> _messages;
-        private readonly string _tableId;
         private readonly IPokerTables _tables;
+        private readonly ICardSelections _selections;
 
-        public MessageProcessor(string tableId, IPokerTables tables)
+        public MessageProcessor(IPokerTables tables, ICardSelections selections)
         {
             var exchanger = new MessageExchanger();
             _messages = new List<IMessage>
@@ -20,11 +20,11 @@
                 new RevealMessage(exchanger),
                 new ResetMessage(exchanger)
             };
-            _tableId = tableId;
             _tables = tables;
+            _selections = selections;
         }
 
-        public async Task ProcessMessageAsync(string messagePayload, string userId, ICardSelections selections)
+        public async Task ProcessMessageAsync(string messagePayload, string userId, string tableId)
         {
             if (string.IsNullOrEmpty(messagePayload)) return;
 
@@ -35,7 +35,7 @@
             {
                 if (messageObj.Type == message.MessageType)
                 {
-                    await message.Execute(_tableId, new { Value = messageObj.Value, UserId = userId }, _tables, selections);
+                    await message.Execute(tableId, new { Value = messageObj.Value, UserId = userId }, _tables, _selections);
                 }
             }
         }
