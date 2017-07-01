@@ -169,12 +169,14 @@
     <Compile Include="CardSelection.cs" />
     <Compile Include="CardSelections.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="DependencyResolver.cs" />
     <Compile Include="ErrorHandler\AiHandleErrorAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="HttpHandlerFactory.cs" />
     <Compile Include="ICardSelections.cs" />
+    <Compile Include="IDendencyResolver.cs" />
     <Compile Include="IMessageExchanger.cs" />
     <Compile Include="IPokerTables.cs" />
     <Compile Include="IUniqueIdGenerator.cs" />
