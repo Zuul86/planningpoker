@@ -2,7 +2,7 @@
 {
     using Microsoft.Practices.Unity;
 
-    public class DependencyResolver : IDendencyResolver
+    public class DependencyResolver : IDependencyResolver
     {
         public T Resolve<T>()
         {

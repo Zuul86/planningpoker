@@ -64,6 +64,11 @@
             {
                 table = Tables[tableId];
                 table.Remove(userId);
+
+                if(table.Count == 0)
+                {
+                    Tables.Remove(tableId);
+                }
             }
             finally
             {

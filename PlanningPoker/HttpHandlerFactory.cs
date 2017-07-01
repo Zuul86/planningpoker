@@ -6,14 +6,14 @@ namespace PlanningPoker
 
     public class HttpHandlerFactory : IHttpHandlerFactory
     {
-        private IDendencyResolver _resolver;
+        private IDependencyResolver _resolver;
 
         public HttpHandlerFactory() : this(new DependencyResolver())
         {
 
         }
 
-        public HttpHandlerFactory(IDendencyResolver resolver)
+        public HttpHandlerFactory(IDependencyResolver resolver)
         {
             _resolver = resolver;
         }

@@ -5,9 +5,9 @@
 
     public class MessageContainer : IMessageContainer
     {
-        private readonly IDendencyResolver _resolver;
+        private readonly IDependencyResolver _resolver;
 
-        public MessageContainer(IDendencyResolver resolver)
+        public MessageContainer(IDependencyResolver resolver)
         {
             _resolver = resolver;
         }

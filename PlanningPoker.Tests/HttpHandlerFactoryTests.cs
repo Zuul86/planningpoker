@@ -12,7 +12,7 @@
         [TestMethod]
         public void GetHandlerReturnsPlanningPokerWebSocketHandler()
         {
-            var dependancyResolverMock = new Mock<IDendencyResolver>();
+            var dependancyResolverMock = new Mock<IDependencyResolver>();
             var handler = _fixture.Create<PlanningPokerWebSocketHandler>();
             dependancyResolverMock.Setup(x => x.Resolve<PlanningPokerWebSocketHandler>()).Returns(handler);
             var factory = new HttpHandlerFactory(dependancyResolverMock.Object);
@@ -23,7 +23,7 @@
         [TestMethod]
         public void GetHandlerReturnsNull()
         {
-            var dependancyResolverMock = new Mock<IDendencyResolver>();
+            var dependancyResolverMock = new Mock<IDependencyResolver>();
             var handler = _fixture.Create<PlanningPokerWebSocketHandler>();
             dependancyResolverMock.Setup(x => x.Resolve<PlanningPokerWebSocketHandler>()).Returns(handler);
             var factory = new HttpHandlerFactory(dependancyResolverMock.Object);

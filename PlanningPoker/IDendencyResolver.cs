@@ -1,6 +1,6 @@
 ﻿namespace PlanningPoker
 {
-    public interface IDendencyResolver
+    public interface IDependencyResolver
     {
         T Resolve<T>();
     }
