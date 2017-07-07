@@ -161,11 +161,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\UnityConfig.cs" />
-    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="CardSelection.cs" />
     <Compile Include="CardSelections.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -206,7 +204,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Connected Services\Application Insights\ConnectedService.json" />
-    <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="src\actions\clientActions.js" />
     <Content Include="src\actions\screenActions.js" />
     <Content Include="src\components\MyCard.test.js" />
@@ -262,6 +259,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
+    <Folder Include="Scripts\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

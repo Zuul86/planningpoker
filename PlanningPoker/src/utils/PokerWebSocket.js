@@ -29,7 +29,6 @@ export default class PokerWebSocket {
                 default:
                     throw new Error('unknown message');
             }
-            
         });
 
         this.socket.addEventListener('open', function (event) {

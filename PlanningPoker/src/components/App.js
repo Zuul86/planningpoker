@@ -14,17 +14,21 @@ import '../styles/panel.css';
 
 class Main extends React.Component {   
 
-    componentWillMount(){
+    componentWillMount() {
+        this.selectedCard = 0;
         this.socket = this.socket || new PokerWebSocket(this.props);
         this.send = (x) => {
             this.socket.sendMessage(x);
             const message = JSON.parse(x);
             if (message.type === 'effort') {
                 this.selectedCard = message.value;
-            } else if (message.type === 'reset') {
-                this.selectedCard = 0;
             }
         };
+    }
+
+    findSelectedCard(selectedCard){
+        const result = this.props.cards.find((x) => { return x.Effort === selectedCard.toString(); });
+        return result ? parseInt(result.Effort) : 0;
     }
 
     render(){
@@ -32,7 +36,7 @@ class Main extends React.Component {
             <div>
                 <TeamCards cards={this.props.cards} numberOfClients={this.props.numberOfClients} showCards={this.props.screen.showCards} table={this.props.table} onRevealClick={this.send} onResetTableClick={this.send} />
                 <div className="bottom">
-                    <MyCards onCardClick={this.send} selectedCard={this.selectedCard} />
+                    <MyCards onCardClick={this.send} selectedCard={this.findSelectedCard(this.selectedCard)} />
                 </div>
             </div>
         );
