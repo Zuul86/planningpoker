@@ -6,19 +6,11 @@ import TeamCard from './TeamCard';
 describe('TeamCard component', () => {
     it('is styled', () => {
         const card = {};
-        const wrapper = shallow(<TeamCard card={card} showEffort={false} />);
+        const wrapper = shallow(<TeamCard card={card} showEffort={true} />);
         const actual = wrapper.find('div').first().prop('className');
         const expected = 'card large';
 
         expect(actual).toBe(expected);
-    });
-
-    it('shows glyph if hide effort', () =>{
-        const card = {};
-        const wrapper = shallow(<TeamCard card={card} showEffort={false} />);
-        const actual = wrapper.find('div').last().prop('className');
-
-        expect(actual).toBe('glyphicon glyphicon-ok-circle');
     });
 
      it('shows effort', () =>{

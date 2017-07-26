@@ -7,7 +7,7 @@
 
     public class PokerTables : IPokerTables
     {
-        private static readonly IDictionary<string, IDictionary<Guid, WebSocket>> _tables = new Dictionary<string, IDictionary<Guid, WebSocket>>();
+        private static readonly IDictionary<string, IDictionary<Guid, User>> _tables = new Dictionary<string, IDictionary<Guid, User>>();
         private static readonly ReaderWriterLockSlim Locker = new ReaderWriterLockSlim();
         private readonly IUniqueIdGenerator _generator;
 
@@ -21,7 +21,7 @@
             _generator = generator;
         }
 
-        public IDictionary<string, IDictionary<Guid, WebSocket>> Tables
+        public IDictionary<string, IDictionary<Guid, User>> Tables
         {
             get
             {
@@ -39,13 +39,15 @@
                     tableId = _generator.GenerateShortUniqueId();
                 }
 
+                var user = new User { Name = string.Empty, Socket = socket };
+
                 if (Tables.ContainsKey(tableId))
                 {
-                    Tables[tableId].Add(userId, socket);
+                    Tables[tableId].Add(userId, user);
                 }
                 else
                 {
-                    Tables.Add(tableId, new Dictionary<Guid, WebSocket> { { userId, socket } });
+                    Tables.Add(tableId, new Dictionary<Guid, User> { { userId, user } });
                 }
             }
             finally
@@ -56,10 +58,10 @@
             return tableId;
         }
 
-        public IDictionary<Guid, WebSocket> RemoveTable(string tableId, Guid userId)
+        public IDictionary<Guid, User> RemoveTable(string tableId, Guid userId)
         {
             Locker.EnterWriteLock();
-            IDictionary<Guid, WebSocket> table;
+            IDictionary<Guid, User> table;
             try
             {
                 table = Tables[tableId];

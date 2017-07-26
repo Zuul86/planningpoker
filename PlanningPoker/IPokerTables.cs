@@ -5,8 +5,8 @@
     using System.Net.WebSockets;
     public interface IPokerTables
     {
-        IDictionary<string, IDictionary<Guid, WebSocket>> Tables { get; }
+        IDictionary<string, IDictionary<Guid, User>> Tables { get; }
         string AddUserToTable(string tableId, Guid userId, WebSocket socket);
-        IDictionary<Guid, WebSocket> RemoveTable(string tableId, Guid userId);
+        IDictionary<Guid, User> RemoveTable(string tableId, Guid userId);
     }
 }

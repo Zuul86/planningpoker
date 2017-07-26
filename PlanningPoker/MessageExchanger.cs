@@ -52,7 +52,7 @@
         {
             foreach (var client in _tables.Tables[tableId])
             {
-                await SendMessageAsync(client.Value, message, payload);
+                await SendMessageAsync(client.Value.Socket, message, payload);
             }
         }
     }

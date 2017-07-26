@@ -42,7 +42,7 @@ class TeamCards extends React.Component {
     
     render() {
         const groupedCards = this.groupCards(this.props.cards);
-        const revealEnabled = this.props.numberOfClients === this.props.cards.length;
+
         return (
             <div className="container">
                 <div className="row">
@@ -50,7 +50,7 @@ class TeamCards extends React.Component {
                     <div className="col-md-4">Table: {this.props.table}</div>
                     <div className="col-md-4 text-right">
                         <input type="button" className="btn btn-danger" value="Reset" onClick={this.resetTable} />&nbsp; 
-                        <input type="button" className="btn btn-success" value="Reveal" onClick={this.toggleShowEffort} disabled={!revealEnabled} />
+                        <input type="button" className="btn btn-success" value="Reveal" onClick={this.toggleShowEffort} />
                     </div>
                 </div>
                 <div className="row">

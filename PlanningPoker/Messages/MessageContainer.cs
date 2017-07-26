@@ -1,7 +1,6 @@
 ﻿namespace PlanningPoker.Messages
 {
     using System.Collections.Generic;
-    using Microsoft.Practices.Unity;
 
     public class MessageContainer : IMessageContainer
     {
@@ -19,6 +18,7 @@
                 yield return _resolver.Resolve<EffortMessage>();
                 yield return _resolver.Resolve<RevealMessage>();
                 yield return _resolver.Resolve<ResetMessage>();
+                yield return _resolver.Resolve<UserNameMessage>();
             }
         }
     }

@@ -13,6 +13,7 @@
     "test": "mocha --reporter mocha-trx-reporter --reporter-options output=myResult.trx tools/testSetup.js \"src/**/*.test.js\"",
     "test:coverage": "npm nyc --reporter=html --reporter=text test",
     "test:watch": "npm run test -- --watch",
+    "testlocal": "mocha --reporter progress tools/testSetup.js \"src/**/*.test.js\"",
     "clean-dist": "npm run remove-dist && mkdir dist",
     "remove-dist": "rimraf ./dist",
     "build:html": "babel-node tools/buildHtml.js",

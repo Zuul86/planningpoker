@@ -2,14 +2,14 @@
 import '../styles/card.css';
 
 const TeamCard = ({ card, showEffort }) => {
-    return (<div className="card large">
-        {showEffort ? card.Effort : <div className="glyphicon glyphicon-ok-circle" />}
-        {showEffort && 
+    return (showEffort &&
+        <div className="card large">
+            {card.Effort}
             <span className="badge">
                 {card.Count}
             </span>
-        }
-    </div>);
+
+        </div>);
 };
 
 TeamCard.propTypes = {

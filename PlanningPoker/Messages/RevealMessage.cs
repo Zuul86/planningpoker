@@ -15,7 +15,11 @@
 
         public async Task Execute(string tableId, dynamic message)
         {
-            await _messageExchanger.BroadcastMessageAsync(tableId, "revealCards", new { ShowCards = message.Value });
+            if (!bool.TryParse(message.Value, out bool showCards))
+            {
+                showCards = false;
+            }
+            await _messageExchanger.BroadcastMessageAsync(tableId, "revealCards", new { ShowCards = showCards });
         }
     }
 }
