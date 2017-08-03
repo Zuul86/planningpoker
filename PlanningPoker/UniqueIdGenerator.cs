@@ -7,7 +7,7 @@
     {
         public string GenerateShortUniqueId()
         {
-            var base62chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".ToCharArray();
+            var base62chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
 
             var _random = new Random();
 

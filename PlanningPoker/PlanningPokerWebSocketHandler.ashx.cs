@@ -1,5 +1,6 @@
 ﻿namespace PlanningPoker
 {
+    using Microsoft.ApplicationInsights;
     using PlanningPoker.Messages;
     using System;
     using System.Net.WebSockets;
@@ -13,6 +14,7 @@
         private readonly ICardSelections _selections;
         private readonly IMessageExchanger _messageExchanger;
         private readonly IMessageProcessor _messageProcessor;
+        private TelemetryClient _telemetry = new TelemetryClient();
 
         public PlanningPokerWebSocketHandler(IMessageExchanger messageExchanger, IMessageProcessor messageProcessor, IPokerTables tables, ICardSelections selections)
         {
@@ -26,7 +28,15 @@
         {
             if (context.IsWebSocketRequest)
             {
-                context.AcceptWebSocketRequest(ProcessRequestInternal);
+                try
+                {
+                    context.AcceptWebSocketRequest(ProcessRequestInternal);
+                }
+                catch(Exception ex)
+                {
+                    _telemetry.TrackException(ex);
+                }
+                
             }
         }
 

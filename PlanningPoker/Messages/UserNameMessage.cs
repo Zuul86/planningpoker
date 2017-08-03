@@ -1,5 +1,6 @@
 ﻿namespace PlanningPoker.Messages
 {
+    using System;
     using System.Threading.Tasks;
 
     public class UserNameMessage : IMessage
@@ -17,8 +18,9 @@
 
         public async Task Execute(string tableId, dynamic message)
         {
-            _tables.Tables[tableId][message.UserId].Name = message.Name;
-            await _messageExchanger.BroadcastMessageAsync(tableId, "userName", new { UserId = message.UserId, Name = message.Name });
+            var userId = new Guid(message.UserId);
+            _tables.Tables[tableId][userId].Name = message.Value;
+            await _messageExchanger.BroadcastMessageAsync(tableId, "userName", new { UserId = message.UserId, Name = message.Value });
         }
     }
 }

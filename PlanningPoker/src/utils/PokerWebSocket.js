@@ -26,6 +26,9 @@ export default class PokerWebSocket {
                     props.actions.cardActions.resetTable(response.Payload);
                     props.actions.screenActions.revealCards({ShowCards: false});
                     break;
+                case 'userName':
+                    props.actions.userActions.updateName(response.Payload);
+                    break;
                 default:
                     throw new Error('unknown message');
             }

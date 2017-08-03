@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import TeamCard from './TeamCard';
 import PlayerStatus from './PlayerStatus';
 import '../styles/card.css';
+import _ from 'underscore';
 
 class TeamCards extends React.Component {
     constructor() {
@@ -10,6 +11,9 @@ class TeamCards extends React.Component {
         this.state = { showEffort: false };
         this.toggleShowEffort = this.toggleShowEffort.bind(this);
         this.resetTable = this.resetTable.bind(this);
+        this.nameChanged = this.nameChanged.bind(this);
+
+        this.sendName = _.debounce(this.sendName, 750);
     }
 
     groupCards(cards) {
@@ -31,6 +35,13 @@ class TeamCards extends React.Component {
         return groupedArray.sort((a, b) => { return b.Count - a.Count; });
     }
 
+    sendName(value) {
+        this.props.onNameChange(JSON.stringify({ type: 'userName', value }));
+    }
+
+    nameChanged(e) {
+        this.sendName(e.target.value);
+    }
 
     toggleShowEffort() {
         this.props.onRevealClick(JSON.stringify({ type: 'reveal', value: true }));
@@ -46,9 +57,10 @@ class TeamCards extends React.Component {
         return (
             <div className="container">
                 <div className="row">
-                    <div className="col-md-4">Number of team members: {this.props.numberOfClients}</div>
-                    <div className="col-md-4">Table: {this.props.table}</div>
-                    <div className="col-md-4 text-right">
+                    <div className="col-md-3">Number of team members: {this.props.numberOfClients}</div>
+                    <div className="col-md-3">Table: {this.props.table}</div>
+                    <div className="col-md-3">Name: <input type="textbox" value={this.props.userName} onChange={this.nameChanged} /></div>
+                    <div className="col-md-3 text-right">
                         <input type="button" className="btn btn-danger" value="Reset" onClick={this.resetTable} />&nbsp; 
                         <input type="button" className="btn btn-success" value="Reveal" onClick={this.toggleShowEffort} />
                     </div>
@@ -73,8 +85,11 @@ TeamCards.propTypes = {
     numberOfClients: PropTypes.number,
     onRevealClick: PropTypes.func,
     onResetTableClick: PropTypes.func,
+    onNameChange: PropTypes.func,
     showCards: PropTypes.bool,
-    table: PropTypes.string
+    table: PropTypes.string,
+    userName: PropTypes.string,
+    users: PropTypes.array
 };
 
 export default TeamCards;

@@ -6,7 +6,7 @@ import TeamCard from './TeamCard';
 describe('TeamCard component', () => {
     it('is styled', () => {
         const card = {};
-        const wrapper = shallow(<TeamCard card={card} showEffort={true} />);
+        const wrapper = shallow(<TeamCard card={card} showEffort />);
         const actual = wrapper.find('div').first().prop('className');
         const expected = 'card large';
 

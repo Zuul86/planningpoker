@@ -1,13 +1,14 @@
 import "babel-polyfill";
 import React, {PropTypes} from 'react';
 import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import MyCards from './MyCards';
 import TeamCards from './TeamCards';
 import PokerWebSocket from '../utils/PokerWebSocket';
 import * as cardActions from '../actions/cardActions';
 import * as clientActions from '../actions/clientActions';
 import * as screenActions from '../actions/screenActions';
+import * as userActions from '../actions/userActions';
 import '../../node_modules/bootstrap/dist/css/bootstrap.css';
 import '../../node_modules/bootstrap/dist/js/bootstrap';
 import '../styles/panel.css';
@@ -38,7 +39,7 @@ class Main extends React.Component {
     render() {
         return(
             <div>
-                <TeamCards cards={this.props.cards} numberOfClients={this.props.numberOfClients} showCards={this.props.screen.showCards} table={this.props.table} onRevealClick={this.send} onResetTableClick={this.send} />
+                <TeamCards cards={this.props.cards} numberOfClients={this.props.numberOfClients} showCards={this.props.screen.showCards} table={this.props.table} onRevealClick={this.send} onResetTableClick={this.send} onNameChange={this.send} users={this.props.users} />
                 <div className="bottom">
                     <MyCards onCardClick={this.send} selectedCard={this.findSelectedCard(this.selectedCard)} />
                 </div>
@@ -51,7 +52,8 @@ Main.propTypes = {
     cards: PropTypes.array,
     numberOfClients: PropTypes.number,
     screen: PropTypes.object,
-    table: PropTypes.string
+    table: PropTypes.string,
+    users: PropTypes.array
 };
 
 function mapStateToProps(state = { screen: {} }) {
@@ -59,7 +61,8 @@ function mapStateToProps(state = { screen: {} }) {
         cards: state.cards || [],
         numberOfClients: state.clients,
         screen: state.screen,
-        table: state.table
+        table: state.table,
+        users: state.users || []
     };
 }
 
@@ -68,7 +71,8 @@ function mapDispatchToProps(dispatch){
         actions: {
             cardActions: bindActionCreators(cardActions, dispatch),
             clientActions: bindActionCreators(clientActions, dispatch),
-            screenActions: bindActionCreators(screenActions, dispatch)
+            screenActions: bindActionCreators(screenActions, dispatch),
+            userActions: bindActionCreators(userActions, dispatch)
         }
     };
 }
