@@ -50,9 +50,12 @@
 
         public async Task BroadcastMessageAsync(string tableId, string message, object payload)
         {
-            foreach (var client in _tables.Tables[tableId])
+            if (_tables.Tables.ContainsKey(tableId))
             {
-                await SendMessageAsync(client.Value.Socket, message, payload);
+                foreach (var client in _tables.Tables[tableId])
+                {
+                    await SendMessageAsync(client.Value.Socket, message, payload);
+                }
             }
         }
     }

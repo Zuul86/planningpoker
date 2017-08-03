@@ -64,6 +64,10 @@
 
                     await _messageProcessor.ProcessMessageAsync(message, userId, tableId);
                 }
+                else if (socket.State == WebSocketState.Connecting)
+                {
+
+                }
                 else
                 {
                     await ProcessDisconnectedClientAsync(tableId, userId);
