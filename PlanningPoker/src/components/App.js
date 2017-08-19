@@ -32,7 +32,7 @@ class Main extends React.Component {
 
     findSelectedCard(selectedCard){
         const result = this.props.cards.find((x) => { return x.Effort === selectedCard.toString(); });
-        return result ? parseInt(result.Effort) : 0;
+        return result ? Number(result.Effort) : 0;
     }
 
     render() {
