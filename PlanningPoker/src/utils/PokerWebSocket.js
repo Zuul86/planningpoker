@@ -12,11 +12,12 @@ export default class PokerWebSocket {
                 case 'cardSelection':
                     props.actions.cardActions.selectCard(response.Payload);
                     break;
-                case 'clientConnected':
-                    props.actions.clientActions.clientConnected(response.Payload);
+                case 'userConnected':
+                    props.actions.userActions.userConnected(response.Payload);
+                    props.actions.userActions.updateName({ Name: '', UserId: response.Payload.UserId });
                     break;
-                case 'clientDisconnected':
-                    props.actions.clientActions.clientDisconnected(response.Payload);
+                case 'userDisconnected':
+                    props.actions.userActions.userDisconnected(response.Payload);
                     props.actions.cardActions.removeCard(response.Payload);
                     break;
                 case 'revealCards':

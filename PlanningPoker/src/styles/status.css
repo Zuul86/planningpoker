@@ -1,17 +1,29 @@
-.status{
+.status {
     display: flex;
-    height: 8px;
+    min-height: 8px;
     margin: 25px;
 }
-.status > div {
-    border: solid grey thin;
-    flex-wrap: nowrap;
-    flex: 1;
-    background-color: lightgray;
-    margin: 1px;
-    box-shadow: 2px 2px 2px grey;
+    .status > div {
+        transition: all 0.5s ease;
+        border: solid grey thin;
+        flex-wrap: nowrap;
+        flex: 1;
+        background-color: lightgray;
+        margin: 1px;
+        box-shadow: 2px 2px 2px grey;
+    }
+
+        .status > div.highlight {
+            background-color: greenyellow;
+        }
+
+.userName {
+    display: none;
+    text-align: center;
+    margin: 2px;
+    font-weight: bold;
 }
 
-.status > div.highlight{
-    background-color: greenyellow;
+.status:hover .userName {
+    display: block;
 }

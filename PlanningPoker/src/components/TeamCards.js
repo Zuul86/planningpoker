@@ -57,7 +57,7 @@ class TeamCards extends React.Component {
         return (
             <div className="container">
                 <div className="row">
-                    <div className="col-md-3">Number of team members: {this.props.numberOfClients}</div>
+                    <div className="col-md-3">Number of team members: {this.props.users.length}</div>
                     <div className="col-md-3">Table: {this.props.table}</div>
                     <div className="col-md-3">Name: <input type="textbox" value={this.props.userName} onChange={this.nameChanged} /></div>
                     <div className="col-md-3 text-right">
@@ -67,7 +67,7 @@ class TeamCards extends React.Component {
                 </div>
                 <div className="row">
                     <div className="col-md-12">
-                        <PlayerStatus numberOfPlayers={this.props.numberOfClients} numberOfSelected={this.props.cards.length} />
+                        <PlayerStatus users={this.props.users} cards={this.props.cards} />
                     </div>
                 </div>
                 <div className="row">
@@ -82,7 +82,6 @@ class TeamCards extends React.Component {
 
 TeamCards.propTypes = {
     cards: PropTypes.array,
-    numberOfClients: PropTypes.number,
     onRevealClick: PropTypes.func,
     onResetTableClick: PropTypes.func,
     onNameChange: PropTypes.func,

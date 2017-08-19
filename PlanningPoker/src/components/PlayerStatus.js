@@ -1,14 +1,18 @@
 import React, { PropTypes } from 'react';
 import '../styles/status.css';
 
-function highlightStatus(currentIndicatorIndex, numberOfSelected){
-    return currentIndicatorIndex > numberOfSelected ? 'highlight': '';
+function highlightStatus(currentUserId, cards) {
+    const userSelected = cards.some((item) => { return item.UserId === currentUserId; });
+    return userSelected ? 'highlight': '';
 }
 
-const PlayerStatus = ({numberOfPlayers, numberOfSelected}) => {
+const PlayerStatus = ({users, cards}) => {
     const indicators = [];
-    for (let i = 0; i < numberOfPlayers; i++) {
-        indicators.push(<div className={highlightStatus(numberOfSelected, i)} key={i} />);
+    for (let i = 0; i < users.length; i++) {
+        indicators.push(
+            <div className={highlightStatus(users[i].UserId, cards)} key={i}>
+                <div className="userName">{users[i].Name}</div>
+            </div>);
     }
     return (
         <div className="status">{indicators}</div>
@@ -16,8 +20,8 @@ const PlayerStatus = ({numberOfPlayers, numberOfSelected}) => {
 };
 
 PlayerStatus.propTypes = {
-    numberOfPlayers: PropTypes.number,
-    numberOfSelected: PropTypes.number
+    users: PropTypes.array,
+    cards: PropTypes.array
 };
 
 export default PlayerStatus;

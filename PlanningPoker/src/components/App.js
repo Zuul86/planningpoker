@@ -6,7 +6,6 @@ import MyCards from './MyCards';
 import TeamCards from './TeamCards';
 import PokerWebSocket from '../utils/PokerWebSocket';
 import * as cardActions from '../actions/cardActions';
-import * as clientActions from '../actions/clientActions';
 import * as screenActions from '../actions/screenActions';
 import * as userActions from '../actions/userActions';
 import '../../node_modules/bootstrap/dist/css/bootstrap.css';
@@ -39,7 +38,7 @@ class Main extends React.Component {
     render() {
         return(
             <div>
-                <TeamCards cards={this.props.cards} numberOfClients={this.props.numberOfClients} showCards={this.props.screen.showCards} table={this.props.table} onRevealClick={this.send} onResetTableClick={this.send} onNameChange={this.send} users={this.props.users} />
+                <TeamCards cards={this.props.cards} showCards={this.props.screen.showCards} table={this.props.table} onRevealClick={this.send} onResetTableClick={this.send} onNameChange={this.send} users={this.props.users} />
                 <div className="bottom">
                     <MyCards onCardClick={this.send} selectedCard={this.findSelectedCard(this.selectedCard)} />
                 </div>
@@ -50,7 +49,6 @@ class Main extends React.Component {
 
 Main.propTypes = {
     cards: PropTypes.array,
-    numberOfClients: PropTypes.number,
     screen: PropTypes.object,
     table: PropTypes.string,
     users: PropTypes.array
@@ -59,7 +57,6 @@ Main.propTypes = {
 function mapStateToProps(state = { screen: {} }) {
     return {
         cards: state.cards || [],
-        numberOfClients: state.clients,
         screen: state.screen,
         table: state.table,
         users: state.users || []
@@ -70,7 +67,6 @@ function mapDispatchToProps(dispatch){
     return {
         actions: {
             cardActions: bindActionCreators(cardActions, dispatch),
-            clientActions: bindActionCreators(clientActions, dispatch),
             screenActions: bindActionCreators(screenActions, dispatch),
             userActions: bindActionCreators(userActions, dispatch)
         }

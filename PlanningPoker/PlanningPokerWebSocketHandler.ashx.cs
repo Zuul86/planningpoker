@@ -3,6 +3,7 @@
     using Microsoft.ApplicationInsights;
     using PlanningPoker.Messages;
     using System;
+    using System.Linq;
     using System.Net.WebSockets;
     using System.Threading.Tasks;
     using System.Web;
@@ -58,16 +59,15 @@
             {
                 if (socket.State == WebSocketState.Open)
                 {
-                    await ProcessConnectedClientAsync(socket, tableId, userId, clientConnected);
-
+                    if (clientConnected)
+                    {
+                        await ProcessConnectedClientAsync(socket, tableId, userId);
+                        clientConnected = false;
+                    }
                     var message = await _messageExchanger.ReceiveMessageAsync(socket);
 
                     await _messageProcessor.ProcessMessageAsync(message, userId, tableId);
-                }
-                else if (socket.State == WebSocketState.Connecting)
-                {
-
-                }
+                }          
                 else
                 {
                     await ProcessDisconnectedClientAsync(tableId, userId);
@@ -81,26 +81,23 @@
             return context.QueryString.Count > 0 ? context.QueryString[0] : string.Empty;
         }
 
-        private async Task ProcessConnectedClientAsync(WebSocket socket, string tableId, Guid userId, bool clientConnected)
+        private async Task ProcessConnectedClientAsync(WebSocket socket, string tableId, Guid userId)
         {
-            if (clientConnected)
+            await _messageExchanger.BroadcastMessageAsync(tableId, "userConnected", 
+                new { Users = _tables.Tables[tableId].Select(x => new { UserId = x.Key, Name = x.Value.Name }), UserId = userId, TableId = tableId });
+            if (_selections.Selections.ContainsKey(tableId))
             {
-                await _messageExchanger.BroadcastMessageAsync(tableId, "clientConnected", new { NumberOfClients = _tables.Tables[tableId].Count, UserId = userId, TableId = tableId });
-                if (_selections.Selections.ContainsKey(tableId))
+                foreach (var item in _selections.Selections[tableId])
                 {
-                    foreach (var item in _selections.Selections[tableId])
-                    {
-                        await _messageExchanger.SendMessageAsync(socket, "cardSelection", item);
-                    }
+                    await _messageExchanger.SendMessageAsync(socket, "cardSelection", item);
                 }
-                clientConnected = false;
             }
         }
 
         private async Task ProcessDisconnectedClientAsync(string tableId, Guid userId)
         {
             var table = _tables.RemoveTable(tableId, userId);
-            await _messageExchanger.BroadcastMessageAsync(tableId, "clientDisconnected", new { NumberOfClients = table.Count, UserId = userId });
+            await _messageExchanger.BroadcastMessageAsync(tableId, "userDisconnected", new { Users = table.Select(x => new { UserId = x.Key, Name = x.Value.Name }), UserId = userId });
         }
     }
 }

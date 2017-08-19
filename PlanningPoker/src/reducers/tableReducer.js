@@ -3,7 +3,7 @@ import initialState from './initialState';
 
 function tableReducer(state = initialState.table, action) {
     switch (action.type) {
-        case types.CLIENT_CONNECTED:
+        case types.USER_CONNECTED:
             return action.TableId;
         default:
             return state;

@@ -27,6 +27,7 @@
     </NuGetPackageImportStamp>
     <ApplicationInsightsResourceId>/subscriptions/a3ae83ad-6e54-4d1e-b30a-268d8d5d6f8a/resourcegroups/PlanningPoker/providers/microsoft.insights/components/planningpokerapp</ApplicationInsightsResourceId>
     <ApplicationInsightsAnnotationResourceId>/subscriptions/a3ae83ad-6e54-4d1e-b30a-268d8d5d6f8a/resourcegroups/PlanningPoker/providers/microsoft.insights/components/planningpokerapp</ApplicationInsightsAnnotationResourceId>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -207,20 +208,20 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Connected Services\Application Insights\ConnectedService.json" />
-    <Content Include="src\actions\clientActions.js" />
     <Content Include="src\actions\screenActions.js" />
     <Content Include="src\actions\userActions.js" />
     <Content Include="src\components\MyCard.test.js" />
     <Content Include="src\components\PlayerStatus.js" />
+    <Content Include="src\components\PlayerStatus.test.js" />
     <Content Include="src\components\Root.js" />
     <Content Include="src\components\TeamCard.js" />
     <Content Include="src\components\TeamCard.test.js" />
-    <Content Include="src\reducers\clientReducer.js" />
     <Content Include="src\reducers\screenReducer.js" />
     <Content Include="src\reducers\tableReducer.js" />
     <Content Include="src\reducers\userReducer.js" />
     <Content Include="src\styles\card.css" />
     <Content Include="src\styles\panel.css" />
+    <Content Include="src\styles\status.css" />
     <Content Include="webpack.config.dev.js" />
     <Content Include="webpack.config.prod.js" />
     <None Include="src\actions\actionTypes.js" />

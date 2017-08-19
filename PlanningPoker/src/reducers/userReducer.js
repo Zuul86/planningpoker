@@ -15,6 +15,9 @@ function userReducer(state = initialState.users, action) {
                 return [...state, { UserId: action.UserId, Name: action.Name }];
             }
         }
+        case types.USER_CONNECTED:
+        case types.USER_DISCONNECTED:
+            return action.Users;
         default:
             return state;
     }
