@@ -57,10 +57,10 @@ class TeamCards extends React.Component {
         return (
             <div className="container">
                 <div className="row">
-                    <div className="col-md-3">Number of team members: {this.props.users.length}</div>
-                    <div className="col-md-3">Table: {this.props.table}</div>
-                    <div className="col-md-3">Name: <input type="textbox" value={this.props.userName} onChange={this.nameChanged} /></div>
-                    <div className="col-md-3 text-right">
+                    <div className="col-xs-6 col-md-3">Number of team members: {this.props.users.length}</div>
+                    <div className="col-xs-6 col-md-3 text-right-sm">Table: {this.props.table}</div>
+                    <div className="col-xs-8 col-md-3">Name: <input type="textbox" value={this.props.userName} onChange={this.nameChanged} /></div>
+                    <div className="col-xs-4 col-md-3 text-right">
                         <input type="button" className="btn btn-danger" value="Reset" onClick={this.resetTable} />&nbsp; 
                         <input type="button" className="btn btn-success" value="Reveal" onClick={this.toggleShowEffort} />
                     </div>
