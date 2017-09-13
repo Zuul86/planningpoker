@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "prestart": "babel-node tools/startMessage.js",
-    "start": "npm-run-all --parallel test:watch open:src lint:watch",
+    "start": "npm-run-all --parallel testlocal:watch open:src lint:watch",
     "open:src": "babel-node tools/srcServer.js",
     "open:dist": "babel-node tools/distServer.js",
     "lint": "node_modules/.bin/esw webpack.config.* src tools",
@@ -14,6 +14,7 @@
     "test:coverage": "npm nyc --reporter=html --reporter=text test",
     "test:watch": "npm run test -- --watch",
     "testlocal": "mocha --reporter progress tools/testSetup.js \"src/**/*.test.js\"",
+    "testlocal:watch": "npm run testlocal -- --watch",
     "clean-dist": "npm run remove-dist && mkdir dist",
     "remove-dist": "rimraf ./dist",
     "build:html": "babel-node tools/buildHtml.js",
