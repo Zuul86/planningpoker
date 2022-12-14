@@ -1,9 +1,0 @@
-export const SELECT_CARD = 'SELECT_CARD';
-export const REMOVE_CARD = 'REMOVE_CARD';
-
-export const REVEAL_CARDS = 'REVEAL_CARDS';
-export const RESET_TABLE = 'RESET_TABLE';
-
-export const USER_CONNECTED = 'USER_CONNECTED';
-export const USER_DISCONNECTED = 'USER_DISCONNECTED';
-export const USER_UPDATED = 'USER_UPDATED';
