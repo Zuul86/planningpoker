@@ -6,7 +6,7 @@ function App() {
     <div>
       <div></div>
       <div className='bottom'>
-        <MyCards selectedCard={1}></MyCards>
+        <MyCards></MyCards>
       </div>
     </div>
   )
