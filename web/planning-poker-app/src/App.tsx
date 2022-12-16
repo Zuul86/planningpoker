@@ -1,15 +1,24 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import MyCards from './components/MyCards/MyCards'
+
+const mySocket = new WebSocket("wss://733l6u90dc.execute-api.us-west-2.amazonaws.com/dev");
 
 function App() {
 
   const [tableName, setTableName] = useState('');
   const [userName, setUserName] = useState('');
 
-  const mySocket = new WebSocket("wss://733l6u90dc.execute-api.us-west-2.amazonaws.com/dev");
+  useEffect(()=>{
 
-  function joinTable() {
+
+    mySocket.onmessage = (e) => {
+      console.log('MESSAGE: ');
+      console.log(e);
+    }
+  }, [])
+  
+  const joinTable = () => {
     const myAction = {
       action: 'jointable',
       tableName: tableName,

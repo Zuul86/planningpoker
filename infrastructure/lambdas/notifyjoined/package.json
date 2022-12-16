@@ -1,0 +1,22 @@
+{
+  "name": "notifyjoined",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prebuild": "del dist\\index.zip",
+    "build": "esbuild index.ts --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=dist/index.js",
+    "publish": "cd dist && aws lambda update-function-code --function-name notifyjoined --zip-file fileb://index.zip --publish"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.109",
+    "esbuild": "^0.16.3"
+  },
+  "dependencies": {
+    "@aws-sdk/client-apigatewaymanagementapi": "^3.226.0",
+    "@aws-sdk/client-dynamodb": "^3.226.0",
+    "@aws-sdk/util-dynamodb": "^3.226.0"
+  }
+}
