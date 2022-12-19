@@ -9,7 +9,9 @@ export const handler = async (event: DynamoDBStreamEvent, context: Context) => {
 
     for (const record of event.Records) {
         const tablejoined = record.dynamodb?.NewImage?.TableName.S || ''
-        console.log(record.dynamodb);
+        
+        if(!tablejoined){ continue; }
+
         const queryParams: QueryCommandInput = {
             TableName: 'PlanningPokerTable',
             ExpressionAttributeValues: {

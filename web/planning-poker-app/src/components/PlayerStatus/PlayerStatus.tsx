@@ -1,18 +1,9 @@
-const PlayerStatus = () => {
-    // const indicators = [];
-    // function highlightStatus(currentUserId, cards) {
-    //     const userSelected = cards.some((item) => { return item.UserId === currentUserId; });
-    //     return userSelected ? 'highlight': '';
-    // }
-    // for (let i = 0; i < users.length; i++) {
-    //     indicators.push(
-    //         <div className={highlightStatus(users[i].UserId, cards)} key={i}>
-    //             <div className="userName">{users[i].Name}</div>
-    //         </div>);
-    // }
-    return (
-        <div className="status"></div>
-    );
+const PlayerStatus = ({users}:{users:string[]}) => {
+    const usersAtTable = users.map((i) => {
+        return(<div key={i}>{i}</div>);
+    });
+
+    return <div className="player-status-container">{usersAtTable}</div>;
 };
 
 export default PlayerStatus;

@@ -12,12 +12,13 @@ body {
   min-height: 100vh;
 }
 
+#root {
+  width: 100%;
+}
+
 .top {
   display: flex;
   justify-content: space-between;
-  position: fixed;
-  top: 0;
-  width: 100%;
 }
 
 .top div {
@@ -72,17 +73,11 @@ input {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-label{
+label {
   font-size: 16px;
   font-weight: 600;
   font-family: Arial, Helvetica, sans-serif;
   color: rgb(68, 68, 68);
-}
-
-.bottom {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
 }
 
 .bottom-panel {
@@ -132,9 +127,10 @@ label{
 }
 
 .container {
-  margin-top: 15px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 }
 
 .card {
@@ -168,4 +164,54 @@ label{
   background-color: lightgray;
   transform: translateY(3px);
   transition: background-color .25s, transform .25s;
+}
+
+.status {
+  display: flex;
+  min-height: 8px;
+  margin: 25px;
+}
+
+.status>div {
+  transition: all 0.5s ease;
+  border: solid grey thin;
+  flex-wrap: nowrap;
+  flex: 1;
+  background-color: lightgray;
+  margin: 1px;
+  box-shadow: 2px 2px 2px grey;
+}
+
+.status>div.highlight {
+  background-color: greenyellow;
+}
+
+.userName {
+  display: none;
+  text-align: center;
+  margin: 2px;
+  font-weight: bold;
+}
+
+.status:hover .userName {
+  display: block;
+}
+
+.player-status-container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.player-status-container>div {
+  font-size: 24pt;
+  font-weight: bold;
+  padding: 5px;
+  transition: all 0.5s ease;
+  border: solid grey thin;
+  background-color: lightgray;
+  box-shadow: 2px 2px 2px grey;
+}
+
+.player-status-bar{
+  height: 100%;
 }

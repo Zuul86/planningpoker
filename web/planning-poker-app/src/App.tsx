@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import MyCards from './components/MyCards/MyCards'
+import PlayerStatus from './components/PlayerStatus/PlayerStatus';
 
 const mySocket = new WebSocket("wss://733l6u90dc.execute-api.us-west-2.amazonaws.com/dev");
 
@@ -8,13 +9,14 @@ function App() {
 
   const [tableName, setTableName] = useState('');
   const [userName, setUserName] = useState('');
+  const [tableUsers, setTableUsers] = useState([]);
 
   useEffect(()=>{
-
-
     mySocket.onmessage = (e) => {
-      console.log('MESSAGE: ');
-      console.log(e);
+      const payload = JSON.parse(e.data);
+      if(payload.message === 'notifyjoined'){
+        setTableUsers(payload.userName)
+      }
     }
   }, [])
   
@@ -40,7 +42,9 @@ function App() {
           <button type='button'>Reset Votes</button>
         </div>
       </div>
-      <div></div>
+      <div className='player-status-bar'>
+        <PlayerStatus users={tableUsers}></PlayerStatus>
+      </div>
       <div className='bottom'>
         <MyCards></MyCards>
       </div>
