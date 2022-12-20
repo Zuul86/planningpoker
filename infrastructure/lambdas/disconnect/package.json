@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prebuild": "del dist\\index.zip",
     "build": "esbuild index.ts --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=dist/index.js",
     "publish": "cd dist && aws lambda update-function-code --function-name disconnect --zip-file fileb://index.zip --publish"
   },
