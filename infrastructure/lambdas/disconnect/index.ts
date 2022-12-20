@@ -21,7 +21,7 @@ export const handler = async (event: APIGatewayEvent, context: Context) : Promis
 
         const params: DeleteItemCommandInput = {
             TableName: 'PlanningPokerTable',
-            Key: { 'TableName': { S: itemToDelete.TableName }, 'ConnectionId': { N: String(itemToDelete.ConnectionId) } }
+            Key: { 'TableName': { S: itemToDelete.TableName }, 'ConnectionId': { S: String(itemToDelete.ConnectionId) } }
         };
 
         try {
