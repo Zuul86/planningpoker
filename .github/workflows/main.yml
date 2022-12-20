@@ -27,7 +27,7 @@ jobs:
       - name: zip
         uses: montudor/action-zip@v0.1.0
         with:
-          args: zip -qq -r ./infrastructure/lambdas/jointable/dist/index.zip ./
+          args: zip -qq -r index.zip ./dist/
       - name: default deploy
         uses: appleboy/lambda-action@master
         with:
@@ -35,5 +35,4 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: us-west-2
           function_name: jointable
-          working_directory: './infrastructure/lambdas/jointable/dist/'
-          zip_file: index.zip
+          zip_file: 'index.zip'
