@@ -8,9 +8,11 @@ export const handler = async (event: DynamoDBStreamEvent, context: Context) => {
     const apiGatewayClient = new ApiGatewayManagementApi({ endpoint: 'https://733l6u90dc.execute-api.us-west-2.amazonaws.com/dev' })
 
     for (const record of event.Records) {
-        const tablejoined = record.dynamodb?.NewImage?.TableName.S || ''
+        let tablejoined = record.dynamodb?.NewImage?.TableName.S || ''
         
-        if(!tablejoined){ continue; }
+        if(!tablejoined){
+            tablejoined = record.dynamodb?.OldImage?.TableName.S || ''
+         }
 
         const queryParams: QueryCommandInput = {
             TableName: 'PlanningPokerTable',
