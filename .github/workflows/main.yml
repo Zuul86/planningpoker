@@ -35,4 +35,5 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: us-west-2
           function_name: jointable
-          zip_file: ./index.zip
+          working_directory: './infrastructure/lambdas/jointable/dist/'
+          zip_file: index.zip
