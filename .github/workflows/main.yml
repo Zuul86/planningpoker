@@ -28,7 +28,7 @@ jobs:
         uses: montudor/action-zip@v1
       - name: Zip output
         working-directory: './infrastructure/lambdas/jointable/dist'
-        run: zip -qq -r index.zip ./
+        run: zip -qq -r index.zip .
       - name: default deploy
         uses: appleboy/lambda-action@master
         with:
