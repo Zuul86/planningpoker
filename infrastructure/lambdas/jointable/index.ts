@@ -32,9 +32,8 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
 
    const document = {
       TableName: tableName,
-      TableCreateDateTime: Date.now(),
-      UserName: userName,
-      ConnectionId: connectionId
+      ConnectionId: connectionId,
+      UserName: userName
    };
 
    const params: PutItemCommandInput = {
