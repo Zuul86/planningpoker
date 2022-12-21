@@ -28,12 +28,12 @@ export const handler = async (event: DynamoDBStreamEvent, context: Context) => {
 
         for (let i = 0; i < totalUsersAtTable; i++) {
             const userName = userData.Items?.find(x => {
-                return x.ConnectionId === record.dynamodb?.NewImage?.ConnectionId;
+                return x.ConnectionId.S === record.dynamodb?.NewImage?.ConnectionId.S;
             })
             const item = userData.Items ? userData.Items[i] : {};
             const userObj = unmarshall(item);
             const tableResponse = {
-                message: 'notify-vote', effort: record.dynamodb?.NewImage?.Effort, userName: userName?.UserName
+                message: 'notify-vote', effort: record.dynamodb?.NewImage?.Effort.N, userName: userName?.UserName
             }
 
             try {
