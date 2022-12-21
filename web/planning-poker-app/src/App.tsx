@@ -29,6 +29,15 @@ function App() {
     mySocket.send(JSON.stringify(myAction));
   }
 
+  const handleVote = (effort: Number) => {
+    const myAction = {
+      action: 'vote-effort',
+      tableName: tableName,
+      effort: effort
+    }
+    mySocket.send(JSON.stringify(myAction));
+  };
+
   return (
     <div className='container'>
       <div className='top'>
@@ -46,7 +55,7 @@ function App() {
         <PlayerStatus users={tableUsers}></PlayerStatus>
       </div>
       <div className='bottom'>
-        <MyCards></MyCards>
+        <MyCards handleVote={handleVote}></MyCards>
       </div>
     </div>
   );

@@ -1,12 +1,13 @@
 import { useState } from "react";
 import MyCard from "../MyCard/MyCard";
 
-function MyCards() {
+function MyCards({handleVote}:{handleVote: Function}) {
 
     const [selectedCard, setSelectedCard] = useState(0);
 
     function onCardClick(selectedCard: number){
-        setSelectedCard(selectedCard)
+        setSelectedCard(selectedCard);
+        handleVote(selectedCard);
     }
 
     return (
