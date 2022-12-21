@@ -10,12 +10,15 @@ function App() {
   const [tableName, setTableName] = useState('');
   const [userName, setUserName] = useState('');
   const [tableUsers, setTableUsers] = useState([]);
+  const [userVotes, setUserVotes] = useState([{user: '', effort: 0}] as {user: string, effort: number}[]);
 
   useEffect(()=>{
     mySocket.onmessage = (e) => {
       const payload = JSON.parse(e.data);
       if(payload.message === 'notifyjoined'){
         setTableUsers(payload.userName)
+      } else if(payload.message === 'notify-vote'){
+        setUserVotes(payload.votes)
       }
     }
   }, [])
@@ -52,7 +55,7 @@ function App() {
         </div>
       </div>
       <div className='player-status-bar'>
-        <PlayerStatus users={tableUsers}></PlayerStatus>
+        <PlayerStatus users={tableUsers} usersWhoVoted={userVotes.map(u => (u.user))}></PlayerStatus>
       </div>
       <div className='bottom'>
         <MyCards handleVote={handleVote}></MyCards>
