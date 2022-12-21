@@ -33,7 +33,7 @@ export const handler = async (event: DynamoDBStreamEvent, context: Context) => {
             const item = userData.Items ? userData.Items[i] : {};
             const userObj = unmarshall(item);
             const tableResponse = {
-                message: 'notify-vote', effort: record.dynamodb?.NewImage?.Effort.N, userName: userName?.UserName
+                message: 'notify-vote', effort: record.dynamodb?.NewImage?.Effort.N, userName: userName?.UserName.S
             }
 
             try {
