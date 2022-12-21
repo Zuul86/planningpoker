@@ -182,10 +182,6 @@ label {
   box-shadow: 2px 2px 2px grey;
 }
 
-.status>div.highlight {
-  background-color: greenyellow;
-}
-
 .userName {
   display: none;
   text-align: center;
@@ -210,6 +206,10 @@ label {
   border: solid grey thin;
   background-color: lightgray;
   box-shadow: 2px 2px 2px grey;
+}
+
+.player-status-container>div.highlighted{
+  background-color: greenyellow;
 }
 
 .player-status-bar{

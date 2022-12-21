@@ -24,16 +24,26 @@ export const handler = async (event: DynamoDBStreamEvent, context: Context) => {
 
         const userData = await client.query(queryParams);
 
+        const queryVotesParams: QueryCommandInput = {
+            TableName: 'PlanningPokerVote',
+            ExpressionAttributeValues: {
+                ':tableName': { S: tablejoined }
+            },
+            KeyConditionExpression: 'TableName = :tableName'
+        };
+
+        const voteResult = await client.query(queryVotesParams);
+
+        const votes = voteResult.Items || []
+
         const totalUsersAtTable = userData.Count || 0;
 
         for (let i = 0; i < totalUsersAtTable; i++) {
-            const userName = userData.Items?.find(x => {
-                return x.ConnectionId.S === record.dynamodb?.NewImage?.ConnectionId.S;
-            })
             const item = userData.Items ? userData.Items[i] : {};
             const userObj = unmarshall(item);
             const tableResponse = {
-                message: 'notify-vote', effort: record.dynamodb?.NewImage?.Effort.N, userName: userName?.UserName.S
+                message: 'notify-vote', 
+                votes: votes.map(x =>  ({user: userData.Items?.find(u => (u.ConnectionId.S === x.ConnectionId.S))?.UserName.S, effort: x.Effort.N}))
             }
 
             try {
