@@ -11,7 +11,7 @@ function App() {
   const [tableName, setTableName] = useState('');
   const [userName, setUserName] = useState('');
   const [tableUsers, setTableUsers] = useState([]);
-  const [userVotes, setUserVotes] = useState([{user: '', effort: 0}] as {user: string, effort: number}[]);
+  const [userVotes, setUserVotes] = useState([] as {user: string, effort: number}[]);
 
   useEffect(()=>{
     mySocket.onmessage = (e) => {
@@ -59,7 +59,7 @@ function App() {
         <PlayerStatus users={tableUsers} usersWhoVoted={userVotes.map(u => (u.user))}></PlayerStatus>
       </div>
       <div className='results-panel'>
-        <ResultsPanel cards={userVotes} />
+        <ResultsPanel efforts={userVotes.map(u => (u.effort))} />
       </div>
       <div className='bottom'>
         <MyCards handleVote={handleVote}></MyCards>

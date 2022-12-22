@@ -1,18 +1,29 @@
 import TeamCard from "../TeamCard/TeamCard";
 
-function ResultsPanel({cards}:{cards:{user: string, effort: number}[]}) {
+function ResultsPanel({ efforts }: { efforts: number[] }) {
 
-    function groupCards(cards:{user: string, effort: number}[]) : {Effort: Number, Count: Number}[] {
-       return [
-        {Effort: 3, Count: 2},
-        {Effort: 1, Count: 3},
-       ].sort((a, b) => { return b.Count - a.Count; })
+    function groupCards(efforts: number[]): { Effort: Number, Count: Number }[] {
+
+        const effortCounts = new Map<number, number>();
+
+        efforts.forEach(effort => {
+            const currentCount = effortCounts.get(effort)
+            effortCounts.set(effort, currentCount ? currentCount + 1: 1)
+        })
+        
+        const results: { Effort: number, Count: number }[] = [];
+
+        effortCounts.forEach((count, effort) => {
+            results.push({ Effort: effort, Count: count })
+        })
+        return results.sort((a, b) => { return b.Count - a.Count; })
     }
-    
-    const groupedCards = groupCards(cards);
-    return <div>{groupedCards.map(item => {
-        return (<TeamCard key={item.Effort.toString()} card={item} showEffort={true} />);
-    })}</div>
+
+    return (<>
+        {groupCards(efforts).map(item => {
+            return (<TeamCard key={item.Effort.toString()} card={item} showEffort={false} />);
+        })}
+    </>);
 }
 
 export default ResultsPanel;
