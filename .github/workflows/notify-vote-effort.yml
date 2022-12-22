@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-    paths: 'notify-vote-effort/**'
+    paths: '**/lambdas/notify-vote-effort/**'
 jobs:
   deploy_source:
     name: build and deploy lambda
