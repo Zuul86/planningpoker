@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-    paths: '*/disconnect/**'
+    paths: '**/lambdas/disconnect/**'
 jobs:
   deploy_source:
     name: build and deploy lambda
