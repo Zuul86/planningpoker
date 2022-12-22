@@ -95,9 +95,16 @@ label {
 
   .card>span.badge {
     font-size: 20pt;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: green;
     border: thin black solid;
     text-shadow: 1px 1px 5px black;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    color: lime;
   }
 
   .large {
@@ -208,10 +215,13 @@ label {
   box-shadow: 2px 2px 2px grey;
 }
 
-.player-status-container>div.highlighted{
+.player-status-container>div.highlighted {
   background-color: greenyellow;
 }
 
-.player-status-bar{
+.results-panel {
   height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
