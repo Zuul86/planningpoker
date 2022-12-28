@@ -42,6 +42,14 @@ function App() {
     mySocket.send(JSON.stringify(myAction));
   };
 
+  const handleReveal = () => {
+    const myAction = {
+      action: 'reveal-effort',
+      tableName: tableName
+    }
+    mySocket.send(JSON.stringify(myAction));
+  };
+
   return (
     <div className='container'>
       <div className='top'>
@@ -51,14 +59,14 @@ function App() {
           <button type='button' onClick={joinTable}>Join Table</button>
         </div>
         <div>
-          <button type='button'>Reveal</button>
+          <button type='button' onClick={handleReveal}>Reveal</button>
           <button type='button'>Reset Votes</button>
         </div>
       </div>
       <div className='player-status-bar'>
         <PlayerStatus users={tableUsers} usersWhoVoted={userVotes.map(u => (u.user))}></PlayerStatus>
       </div>
-      <div className='results-panel'>
+      <div className='results-panel reveal'>
         <ResultsPanel efforts={userVotes.map(u => (u.effort))} />
       </div>
       <div className='bottom'>
