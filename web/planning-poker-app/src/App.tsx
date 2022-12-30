@@ -44,7 +44,7 @@ function App() {
 
   const handleReveal = () => {
     const myAction = {
-      action: 'reveal-effort',
+      action: 'reveal-efforts',
       tableName: tableName
     }
     mySocket.send(JSON.stringify(myAction));
@@ -66,7 +66,7 @@ function App() {
       <div className='player-status-bar'>
         <PlayerStatus users={tableUsers} usersWhoVoted={userVotes.map(u => (u.user))}></PlayerStatus>
       </div>
-      <div className='results-panel reveal'>
+      <div className='results-panel'>
         <ResultsPanel efforts={userVotes.map(u => (u.effort))} />
       </div>
       <div className='bottom'>
