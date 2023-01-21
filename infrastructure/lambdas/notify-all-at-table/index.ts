@@ -29,7 +29,7 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
             case 'reveal-efforts':
                 return message;
             default:
-                throw new Error('unrecognized action')
+                throw new Error('unrecognized action');
         }
     }
 
