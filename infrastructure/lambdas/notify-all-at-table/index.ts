@@ -16,7 +16,6 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
         }
      }
 
-    event.requestContext.routeKey
     const queryParams: QueryCommandInput = {
         TableName: 'PlanningPokerTable',
         ExpressionAttributeValues: {
@@ -24,6 +23,17 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
         },
         KeyConditionExpression: 'TableName = :tableName'
     };
+
+    function sanitizeMessage(message:string):string{
+        switch(message){
+            case 'reveal-efforts':
+                return message;
+            default:
+                throw new Error('unrecognized action')
+        }
+    }
+
+    const message = sanitizeMessage(JSON.parse(event.body).message);
 
     const userData = await client.query(queryParams);
 
@@ -37,7 +47,7 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
             await apiGatewayClient.postToConnection({
                 ConnectionId: userObj.ConnectionId,
                 Data: new TextEncoder().encode(JSON.stringify({
-                    message: 'reveal-votes'
+                    message: message                                                                                                                               
                 }))
             });
         } catch (e) {

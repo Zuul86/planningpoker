@@ -41,7 +41,7 @@ function App() {
     }
     mySocket.send(JSON.stringify(myAction));
   };
-
+  // REMOVE THIS COMMENT:   HERE IS THE MESSAGE WE ARE SENDING FOR REVEAL
   const handleReveal = () => {
     const myAction = {
       action: 'reveal-efforts',
