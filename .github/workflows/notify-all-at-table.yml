@@ -1,4 +1,4 @@
-name: Deploy 'notify-vote-effort' lambda
+name: Deploy '/notify-all-at-table' lambda
 on: 
   push:
     branches:
