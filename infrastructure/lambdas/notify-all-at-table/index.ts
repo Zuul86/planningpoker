@@ -9,12 +9,12 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
 
     if (event.body === null) {
         return {
-           statusCode: 400,
-           body: JSON.stringify({
-              "message": "body is empty"
-           })
+            statusCode: 400,
+            body: JSON.stringify({
+                "message": "body is empty"
+            })
         }
-     }
+    }
 
     const queryParams: QueryCommandInput = {
         TableName: 'PlanningPokerTable',
@@ -24,8 +24,8 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
         KeyConditionExpression: 'TableName = :tableName'
     };
 
-    function sanitizeMessage(message:string):string{
-        switch(message){
+    function sanitizeMessage(message: string): string {
+        switch (message) {
             case 'reveal-efforts':
                 return message;
             default:
@@ -47,7 +47,7 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
             await apiGatewayClient.postToConnection({
                 ConnectionId: userObj.ConnectionId,
                 Data: new TextEncoder().encode(JSON.stringify({
-                    message: message                                                                                                                               
+                    message: message
                 }))
             });
         } catch (e) {
@@ -58,7 +58,7 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
     return {
         statusCode: 200,
         body: JSON.stringify({
-           "message": "the message",
+            "message": "the message",
         })
-     };
+    };
 }
