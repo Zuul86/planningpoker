@@ -8,7 +8,6 @@ body {
   margin: 0;
   display: flex;
   place-items: center;
-  min-width: 320px;
   min-height: 100vh;
 }
 
@@ -224,4 +223,10 @@ label {
   display: flex;
   justify-content: center;
   align-items: center;
+  filter: blur(24px);
+  transition: all 0.5s ease;
+}
+
+.reveal{
+  filter: none;
 }

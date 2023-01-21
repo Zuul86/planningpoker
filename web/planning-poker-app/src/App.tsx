@@ -41,6 +41,14 @@ function App() {
     }
     mySocket.send(JSON.stringify(myAction));
   };
+  // REMOVE THIS COMMENT:   HERE IS THE MESSAGE WE ARE SENDING FOR REVEAL
+  const handleReveal = () => {
+    const myAction = {
+      action: 'reveal-efforts',
+      tableName: tableName
+    }
+    mySocket.send(JSON.stringify(myAction));
+  };
 
   return (
     <div className='container'>
@@ -51,7 +59,7 @@ function App() {
           <button type='button' onClick={joinTable}>Join Table</button>
         </div>
         <div>
-          <button type='button'>Reveal</button>
+          <button type='button' onClick={handleReveal}>Reveal</button>
           <button type='button'>Reset Votes</button>
         </div>
       </div>
