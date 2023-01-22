@@ -1,5 +1,6 @@
 name: Deploy 'notify-vote-effort' lambda
 on: 
+  workflow_dispatch:
   push:
     branches:
       - main

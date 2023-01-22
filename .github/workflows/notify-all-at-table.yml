@@ -1,5 +1,6 @@
 name: Deploy 'notify-all-at-table' lambda
 on: 
+  workflow_dispatch:
   push:
     branches:
       - main

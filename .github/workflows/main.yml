@@ -1,5 +1,6 @@
 name: Deploy 'jointable' lambda
-on: 
+on:
+  workflow_dispatch:
   push:
     branches:
       - main
