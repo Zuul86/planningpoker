@@ -9,10 +9,10 @@ export const handler = async (event: DynamoDBStreamEvent, context: Context) => {
 
     for (const record of event.Records) {
         let tablejoined = record.dynamodb?.NewImage?.TableName.S || ''
-        
-        if(!tablejoined){
+
+        if (!tablejoined) {
             tablejoined = record.dynamodb?.OldImage?.TableName.S || ''
-         }
+        }
 
         const queryParams: QueryCommandInput = {
             TableName: 'PlanningPokerTable',
@@ -42,8 +42,8 @@ export const handler = async (event: DynamoDBStreamEvent, context: Context) => {
             const item = userData.Items ? userData.Items[i] : {};
             const userObj = unmarshall(item);
             const tableResponse = {
-                message: 'notify-vote', 
-                votes: votes.map(x =>  ({user: userData.Items?.find(u => (u.ConnectionId.S === x.ConnectionId.S))?.UserName.S, effort: x.Effort.N}))
+                message: 'notify-vote',
+                votes: votes.map(x => ({ user: userData.Items?.find(u => (u.ConnectionId.S === x.ConnectionId.S))?.UserName.S, effort: x.Effort.N }))
             }
 
             try {
