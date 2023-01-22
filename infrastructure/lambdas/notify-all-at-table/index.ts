@@ -24,16 +24,16 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
         KeyConditionExpression: 'TableName = :tableName'
     };
 
-    function sanitizeMessage(message: string): string {
-        switch (message) {
+    function sanitizeMessage(action: string): string {
+        switch (action) {
             case 'reveal-efforts':
-                return message;
+                return action;
             default:
                 throw new Error('unrecognized action');
         }
     }
 
-    const message = sanitizeMessage(JSON.parse(event.body).message);
+    const message = sanitizeMessage(JSON.parse(event.body).action);
 
     const userData = await client.query(queryParams);
 
