@@ -1,4 +1,4 @@
-name: Deploy 'notify-all-at-table' lambda
+name: Manual Deploy 'notify-all-at-table' lambda
 on: 
   workflow_dispatch
 jobs:
