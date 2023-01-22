@@ -5,8 +5,7 @@ import { ApiGatewayManagementApi } from "@aws-sdk/client-apigatewaymanagementapi
 
 export const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
     const client = new DynamoDB({ region: "us-west-2" });
-    const url = process.env.API_GATEWAY_URL;
-    const apiGatewayClient = new ApiGatewayManagementApi({ endpoint: url });
+    const apiGatewayClient = new ApiGatewayManagementApi({ endpoint: process.env.API_GATEWAY_URL });
 
     if (event.body === null) {
         return {
