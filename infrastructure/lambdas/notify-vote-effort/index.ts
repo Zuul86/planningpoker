@@ -5,7 +5,7 @@ import { ApiGatewayManagementApi } from "@aws-sdk/client-apigatewaymanagementapi
 
 export const handler = async (event: DynamoDBStreamEvent, context: Context) => {
     const client = new DynamoDB({ region: 'us-west-2' })
-    const apiGatewayClient = new ApiGatewayManagementApi({ endpoint: 'https://733l6u90dc.execute-api.us-west-2.amazonaws.com/dev' })
+    const apiGatewayClient = new ApiGatewayManagementApi({ endpoint: process.env.API_GATEWAY_URL })
 
     for (const record of event.Records) {
         let tablejoined = record.dynamodb?.NewImage?.TableName.S;
