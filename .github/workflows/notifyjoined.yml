@@ -4,7 +4,6 @@ on:
     branches:
       - main
     paths: '**/lambdas/notifyjoined/**'
-  workflow_dispatch
 jobs:
   deploy_source:
     name: build and deploy lambda
