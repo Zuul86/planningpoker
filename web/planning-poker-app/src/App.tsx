@@ -12,6 +12,7 @@ function App() {
   const [userName, setUserName] = useState('');
   const [tableUsers, setTableUsers] = useState([]);
   const [userVotes, setUserVotes] = useState([] as {user: string, effort: number}[]);
+  const [revealEfforts, setRevealEfforts] = useState(false);
 
   useEffect(()=>{
     mySocket.onmessage = (e) => {
@@ -20,6 +21,9 @@ function App() {
         setTableUsers(payload.userName)
       } else if(payload.message === 'notify-vote'){
         setUserVotes(payload.votes)
+      } else if(payload.message === 'reveal-efforts'){
+        const revealToggle = !revealEfforts;
+        setRevealEfforts(revealToggle);
       }
     }
   }, [])
@@ -66,7 +70,7 @@ function App() {
       <div className='player-status-bar'>
         <PlayerStatus users={tableUsers} usersWhoVoted={userVotes.map(u => (u.user))}></PlayerStatus>
       </div>
-      <div className='results-panel'>
+      <div className={revealEfforts ? 'results-panel reveal': 'results-panel'}>
         <ResultsPanel efforts={userVotes.map(u => (u.effort))} />
       </div>
       <div className='bottom'>
