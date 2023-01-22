@@ -269,3 +269,5 @@ coverage/
 
 # VSTS Test Reporter
 *.trx
+
+.env

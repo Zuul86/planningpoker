@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
- "scripts": {
+  "scripts": {
     "build": "esbuild index.ts --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=dist/index.js",
     "publish": "cd dist && aws lambda update-function-code --function-name notify-all-at-table --zip-file fileb://index.zip --publish"
   },
@@ -11,6 +11,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.109",
+    "@types/node": "^18.11.18",
     "esbuild": "^0.16.12"
   },
   "dependencies": {
