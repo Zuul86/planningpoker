@@ -36,4 +36,4 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: us-west-2
           function_name: notify-vote-effort
-          zip_file: ./infrastructure/lambdas/notify-all-at-tabledist/index.zip
+          zip_file: ./infrastructure/lambdas/notify-all-at-table/dist/index.zip
