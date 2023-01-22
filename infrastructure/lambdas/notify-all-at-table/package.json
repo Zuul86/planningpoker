@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+ "scripts": {
+    "build": "esbuild index.ts --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=dist/index.js",
+    "publish": "cd dist && aws lambda update-function-code --function-name notify-all-at-table --zip-file fileb://index.zip --publish"
   },
   "author": "",
   "license": "ISC",
