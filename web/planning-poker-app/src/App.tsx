@@ -45,7 +45,7 @@ function App() {
     }
     mySocket.send(JSON.stringify(myAction));
   };
-  // REMOVE THIS COMMENT:   HERE IS THE MESSAGE WE ARE SENDING FOR REVEAL
+
   const handleReveal = () => {
     const myAction = {
       action: 'reveal-efforts',
@@ -53,6 +53,14 @@ function App() {
     }
     mySocket.send(JSON.stringify(myAction));
   };
+
+  function handleResetVotes(): void {
+    const myAction = {
+      action: 'reset-vote',
+      tableName: tableName
+    }
+    mySocket.send(JSON.stringify(myAction));
+  }
 
   return (
     <div className='container'>
@@ -64,7 +72,7 @@ function App() {
         </div>
         <div>
           <button type='button' onClick={handleReveal}>Reveal</button>
-          <button type='button'>Reset Votes</button>
+          <button type='button'onClick={handleResetVotes}>Reset Votes</button>
         </div>
       </div>
       <div className='player-status-bar'>
