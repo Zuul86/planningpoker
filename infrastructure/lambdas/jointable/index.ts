@@ -2,7 +2,7 @@ import { Context, APIGatewayProxyResult, APIGatewayEvent } from 'aws-lambda';
 import { DynamoDBClient, PutItemCommand, PutItemCommandInput } from "@aws-sdk/client-dynamodb";
 import { marshall } from "@aws-sdk/util-dynamodb";
 
-export const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
+export const handler = async (event: APIGatewayEvent, context: Context): Promise<void> => {
    console.log(`Event: ${JSON.stringify(event, null, 2)}`);
    console.log(`Context: ${JSON.stringify(context, null, 2)}`);
 
@@ -41,18 +41,10 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
       Item: marshall(document)
    };
 
-   const run = async function () {
-      try {
-         const results = await client.send(new PutItemCommand(params));
-         console.log(results);
-      } catch (err) {
-         console.error(err);
-      }
-   };
-
-   await run();
-
-   return {
-      statusCode: 200
-   };
+   try {
+      const results = await client.send(new PutItemCommand(params));
+      console.log(results);
+   } catch (err) {
+      console.error(err);
+   }
 };
