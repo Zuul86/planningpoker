@@ -53,10 +53,6 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
    await run();
 
    return {
-      statusCode: 200,
-      body: JSON.stringify({
-         "message": "userjoined",
-         "username": userName
-      })
+      statusCode: 200
    };
 };
