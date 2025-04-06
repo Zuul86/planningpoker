@@ -53,6 +53,7 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
    await run();
 
    return {
-      statusCode: 200
+      statusCode: 200,
+      body: JSON.stringify({})
    };
 };
