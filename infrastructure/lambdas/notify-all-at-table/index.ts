@@ -28,6 +28,8 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
         switch (action) {
             case 'reveal-efforts':
                 return action;
+            case 'notityjoined':
+                return action;
             default:
                 throw new Error('unrecognized action');
         }
