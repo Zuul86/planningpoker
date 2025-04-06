@@ -4,7 +4,7 @@ import MyCards from './components/MyCards/MyCards'
 import PlayerStatus from './components/PlayerStatus/PlayerStatus';
 import ResultsPanel from './components/ResultsPanel/ResultsPanel';
 
-const mySocket = new WebSocket("wss://733l6u90dc.execute-api.us-west-2.amazonaws.com/dev");
+const mySocket = new WebSocket("wss://o9w0z89o6f.execute-api.us-west-2.amazonaws.com/production/");
 
 function App() {
 
@@ -30,7 +30,7 @@ function App() {
   
   const joinTable = () => {
     const myAction = {
-      action: 'jointable',
+      action: 'join-table',
       tableName: tableName,
       userName: userName
     }
