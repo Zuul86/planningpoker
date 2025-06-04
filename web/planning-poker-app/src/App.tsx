@@ -14,53 +14,44 @@ function App() {
   const [userVotes, setUserVotes] = useState([] as {user: string, effort: number}[]);
   const [revealEfforts, setRevealEfforts] = useState(false);
 
-  useEffect(()=>{
-    mySocket.onmessage = (e) => {
+  useEffect(() => {
+    const handleMessage = (e: MessageEvent) => {
       const payload = JSON.parse(e.data);
-      if(payload.message === 'notifyjoined'){
-        setTableUsers(payload.userName)
-      } else if(payload.message === 'notify-vote'){
-        setUserVotes(payload.votes)
-      } else if(payload.message === 'reveal-efforts'){
-        const revealToggle = !revealEfforts;
-        setRevealEfforts(revealToggle);
+      if (payload.message === 'notifyjoined') {
+        setTableUsers(payload.userName);
+      } else if (payload.message === 'notify-vote') {
+        setUserVotes(payload.votes);
+      } else if (payload.message === 'reveal-efforts') {
+        setRevealEfforts(prev => !prev);
       }
-    }
-  }, [])
-  
-  const joinTable = () => {
-    const myAction = {
-      action: 'join-table',
-      tableName: tableName,
-      userName: userName
-    }
-    mySocket.send(JSON.stringify(myAction));
-  }
+    };
 
-  const handleVote = (effort: Number) => {
-    const myAction = {
-      action: 'vote-effort',
-      tableName: tableName,
-      effort: effort
-    }
-    mySocket.send(JSON.stringify(myAction));
+    mySocket.addEventListener('message', handleMessage);
+
+    return () => {
+      mySocket.removeEventListener('message', handleMessage);
+    };
+  }, [mySocket]);
+  
+  const sendAction = (action: string, extraData: Record<string, any> = {}) => {
+    mySocket.send(JSON.stringify({ action, tableName, ...extraData }));
+  };
+
+  const joinTable = () => {
+    sendAction('join-table', { userName });
+  };
+
+  const handleVote = (effort: number) => {
+    sendAction('vote-effort', { effort });
   };
 
   const handleReveal = () => {
-    const myAction = {
-      action: 'reveal-efforts',
-      tableName: tableName
-    }
-    mySocket.send(JSON.stringify(myAction));
+    sendAction('reveal-efforts');
   };
 
-  function handleResetVotes(): void {
-    const myAction = {
-      action: 'reset-vote',
-      tableName: tableName
-    }
-    mySocket.send(JSON.stringify(myAction));
-  }
+  const handleResetVotes = () => {
+    sendAction('reset-vote');
+  };
 
   return (
     <div className='container'>
