@@ -31,7 +31,7 @@ export const handler = async (event: DynamoDBStreamEvent, context: Context) => {
             const item = userData.Items ? userData.Items[i] : {};
             const userObj = unmarshall(item);
             const tableResponse = {
-                message: 'notifyjoined', userName: usersAtTable
+                message: 'user-joined', userName: usersAtTable
             }
 
             try {
