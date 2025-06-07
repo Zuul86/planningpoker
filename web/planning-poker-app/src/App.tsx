@@ -3,6 +3,7 @@ import './App.css'
 import MyCards from './components/MyCards/MyCards'
 import PlayerStatus from './components/PlayerStatus/PlayerStatus';
 import ResultsPanel from './components/ResultsPanel/ResultsPanel';
+import { Message } from './enums/message.enum';
 
 const mySocket = new WebSocket("wss://o9w0z89o6f.execute-api.us-west-2.amazonaws.com/production/");
 
@@ -17,11 +18,11 @@ function App() {
   useEffect(() => {
     const handleMessage = (e: MessageEvent) => {
       const payload = JSON.parse(e.data);
-      if (payload.message === 'notifyjoined') {
+      if (payload.message === Message.UserJoined) {
         setTableUsers(payload.userName);
-      } else if (payload.message === 'notify-vote') {
+      } else if (payload.message === Message.UserVoted) {
         setUserVotes(payload.votes);
-      } else if (payload.message === 'reveal-efforts') {
+      } else if (payload.message === Message.RevealEfforts) {
         setRevealEfforts(prev => !prev);
       }
     };
@@ -38,19 +39,19 @@ function App() {
   };
 
   const joinTable = () => {
-    sendAction('join-table', { userName });
+    sendAction(Message.JoinTable, { userName });
   };
 
   const handleVote = (effort: number) => {
-    sendAction('vote-effort', { effort });
+    sendAction(Message.VoteEffort, { effort });
   };
 
   const handleReveal = () => {
-    sendAction('reveal-efforts');
+    sendAction(Message.RevealEfforts);
   };
 
   const handleResetVotes = () => {
-    sendAction('reset-vote');
+    sendAction(Message.ResetVote);
   };
 
   return (

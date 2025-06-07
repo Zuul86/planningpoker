@@ -2,6 +2,7 @@ import { Context, DynamoDBStreamEvent } from 'aws-lambda';
 import { DynamoDB, QueryCommandInput } from '@aws-sdk/client-dynamodb';
 import { unmarshall } from '@aws-sdk/util-dynamodb';
 import { ApiGatewayManagementApi } from "@aws-sdk/client-apigatewaymanagementapi";
+import { Message } from '../../../web/planning-poker-app/src/enums/message.enum';
 
 export const handler = async (event: DynamoDBStreamEvent, context: Context) => {
     const client = new DynamoDB({ region: 'us-west-2' })
@@ -31,7 +32,7 @@ export const handler = async (event: DynamoDBStreamEvent, context: Context) => {
             const item = userData.Items ? userData.Items[i] : {};
             const userObj = unmarshall(item);
             const tableResponse = {
-                message: 'user-joined', userName: usersAtTable
+                message: Message.UserJoined, userName: usersAtTable
             }
 
             try {
