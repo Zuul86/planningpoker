@@ -22,6 +22,7 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
             })
         }
     }
+
     const tableName: string = JSON.parse(event.body).tableName;
     const effort: number = JSON.parse(event.body).effort;
     const connectionId: string = event.requestContext?.connectionId;
@@ -37,17 +38,19 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
         Item: marshall(document)
     };
 
-    try {
-        const results = await client.send(new PutItemCommand(params));
-        console.log(results);
-    } catch (err) {
-        console.error(err);
-    }
+    const run = async function () {
+        try {
+            const results = await client.send(new PutItemCommand(params));
+            console.log(results);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    await run();
 
     return {
         statusCode: 200,
-        body: JSON.stringify({
-            "message": "userVoted"
-        })
+        body: JSON.stringify({})
     };
 }
