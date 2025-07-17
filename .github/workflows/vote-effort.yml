@@ -22,7 +22,7 @@ jobs:
         working-directory: './infrastructure/lambdas/vote-effort'
         run: |
           npm ci
-          npm run build-debug --if-present
+          npm run build --if-present
         env:
           CI: true
       - name: Install Zip
