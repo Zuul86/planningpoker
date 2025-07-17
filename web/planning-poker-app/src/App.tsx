@@ -43,7 +43,7 @@ function App() {
   };
 
   const handleVote = (effort: number) => {
-    sendAction(Message.VoteEffort, { effort });
+    sendAction(Message.UserVoted, { effort });
   };
 
   const handleReveal = () => {
