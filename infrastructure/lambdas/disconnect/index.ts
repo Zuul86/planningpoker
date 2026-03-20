@@ -6,7 +6,7 @@ export const handler = async (event: APIGatewayEvent, context: Context) : Promis
     const client = new DynamoDBClient({ region: "us-west-2" });
 
     const deleteByConnectionId = async (tableName: string) => {
-        //This is not scalable but will do for what I need.
+
         const scanFilter: ScanCommandInput = {
             TableName: tableName,
             FilterExpression: "ConnectionId = :connectionId",

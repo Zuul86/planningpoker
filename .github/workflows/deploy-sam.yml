@@ -6,7 +6,6 @@ on:
       - main
     paths:
       - 'infrastructure/**'
-      - '/.github/workflows/deploy-sam.yml'
 
 jobs:
   build-and-deploy:
