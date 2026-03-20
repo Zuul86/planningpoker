@@ -26,12 +26,6 @@ Resources:
       Runtime: nodejs20.x
       Architectures:
         - x86_64
-      Events:
-        ConnectEvent:
-          Type: Api
-          Properties:
-            ApiId: !Ref PlanningPokerWebsocketApi
-            Route: $connect
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
@@ -49,12 +43,6 @@ Resources:
       Runtime: nodejs20.x
       Architectures:
         - x86_64
-      Events:
-        DisconnectEvent:
-          Type: Api
-          Properties:
-            ApiId: !Ref PlanningPokerWebsocketApi
-            Route: $disconnect
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
@@ -72,12 +60,6 @@ Resources:
       Runtime: nodejs20.x
       Architectures:
         - x86_64
-      Events:
-        NotifyAllAtTableEvent:
-          Type: Api
-          Properties:
-            ApiId: !Ref PlanningPokerWebsocketApi
-            Route: notify-all-at-table
       Environment:
         Variables:
           API_GATEWAY_URL: !Sub "https://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/prod"
@@ -106,12 +88,6 @@ Resources:
       Runtime: nodejs20.x
       Architectures:
         - x86_64
-      Events:
-        NotifyVoteEffortEvent:
-          Type: Api
-          Properties:
-            ApiId: !Ref PlanningPokerWebsocketApi
-            Route: notify-vote-effort
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
@@ -129,12 +105,6 @@ Resources:
       Runtime: nodejs20.x
       Architectures:
         - x86_64
-      Events:
-        NotifyJoinedEvent:
-          Type: Api
-          Properties:
-            ApiId: !Ref PlanningPokerWebsocketApi
-            Route: notifyjoined
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
@@ -152,12 +122,6 @@ Resources:
       Runtime: nodejs20.x
       Architectures:
         - x86_64
-      Events:
-        ResetVoteEvent:
-          Type: Api
-          Properties:
-            ApiId: !Ref PlanningPokerWebsocketApi
-            Route: reset-vote
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
@@ -175,12 +139,6 @@ Resources:
       Runtime: nodejs20.x
       Architectures:
         - x86_64
-      Events:
-        VoteEffortEvent:
-          Type: Api
-          Properties:
-            ApiId: !Ref PlanningPokerWebsocketApi
-            Route: vote-effort
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
@@ -190,16 +148,172 @@ Resources:
         EntryPoints:
           - index.ts
   
+  # --- WebSocket Integrations, Routes, and Permissions ---
+
+  # 1. JoinTable
+  JoinTableIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${JoinTableFunction.Arn}/invocations"
+
+  JoinTableRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      RouteKey: $connect
+      Target: !Join [ "/", [ "integrations", !Ref JoinTableIntegration ] ]
+
+  JoinTablePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref JoinTableFunction
+      Principal: apigateway.amazonaws.com
+
+  # 2. Disconnect
+  DisconnectIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DisconnectFunction.Arn}/invocations"
+
+  DisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      RouteKey: $disconnect
+      Target: !Join [ "/", [ "integrations", !Ref DisconnectIntegration ] ]
+
+  DisconnectPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref DisconnectFunction
+      Principal: apigateway.amazonaws.com
+
+  # 3. NotifyAllAtTable
+  NotifyAllAtTableIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${NotifyAllAtTableFunction.Arn}/invocations"
+
+  NotifyAllAtTableRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      RouteKey: notify-all-at-table
+      Target: !Join [ "/", [ "integrations", !Ref NotifyAllAtTableIntegration ] ]
+
+  NotifyAllAtTablePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref NotifyAllAtTableFunction
+      Principal: apigateway.amazonaws.com
+
+  # 4. NotifyVoteEffort
+  NotifyVoteEffortIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${NotifyVoteEffortFunction.Arn}/invocations"
+
+  NotifyVoteEffortRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      RouteKey: notify-vote-effort
+      Target: !Join [ "/", [ "integrations", !Ref NotifyVoteEffortIntegration ] ]
+
+  NotifyVoteEffortPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref NotifyVoteEffortFunction
+      Principal: apigateway.amazonaws.com
+
+  # 5. NotifyJoined
+  NotifyJoinedIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${NotifyJoinedFunction.Arn}/invocations"
+
+  NotifyJoinedRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      RouteKey: notifyjoined
+      Target: !Join [ "/", [ "integrations", !Ref NotifyJoinedIntegration ] ]
+
+  NotifyJoinedPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref NotifyJoinedFunction
+      Principal: apigateway.amazonaws.com
+
+  # 6. ResetVote
+  ResetVoteIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ResetVoteFunction.Arn}/invocations"
+
+  ResetVoteRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      RouteKey: reset-vote
+      Target: !Join [ "/", [ "integrations", !Ref ResetVoteIntegration ] ]
+
+  ResetVotePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref ResetVoteFunction
+      Principal: apigateway.amazonaws.com
+
+  # 7. VoteEffort
+  VoteEffortIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${VoteEffortFunction.Arn}/invocations"
+
+  VoteEffortRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      RouteKey: vote-effort
+      Target: !Join [ "/", [ "integrations", !Ref VoteEffortIntegration ] ]
+
+  VoteEffortPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref VoteEffortFunction
+      Principal: apigateway.amazonaws.com
+
   Deployment:
     Type: AWS::ApiGatewayV2::Deployment
     DependsOn:
-      - JoinTableFunction
-      - DisconnectFunction
-      - NotifyAllAtTableFunction
-      - NotifyVoteEffortFunction
-      - NotifyJoinedFunction
-      - ResetVoteFunction
-      - VoteEffortFunction
+      - JoinTableRoute
+      - DisconnectRoute
+      - NotifyAllAtTableRoute
+      - NotifyVoteEffortRoute
+      - NotifyJoinedRoute
+      - ResetVoteRoute
+      - VoteEffortRoute
     Properties:
       ApiId: !Ref PlanningPokerWebsocketApi
 
