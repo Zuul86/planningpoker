@@ -2,6 +2,7 @@ import { Context, APIGatewayProxyResult, APIGatewayEvent } from 'aws-lambda';
 import { DynamoDB, QueryCommandInput } from "@aws-sdk/client-dynamodb";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
 import { ApiGatewayManagementApi } from "@aws-sdk/client-apigatewaymanagementapi";
+import { Message } from '../../../web/planning-poker-app/src/enums/message.enum';
 
 export const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
     const client = new DynamoDB({ region: "us-west-2" });
@@ -26,7 +27,7 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
 
     function sanitizeMessage(action: string): string {
         switch (action) {
-            case 'reveal-efforts':
+            case Message.RevealEfforts:
                 return action;
             default:
                 throw new Error('unrecognized action');
