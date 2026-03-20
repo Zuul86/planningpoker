@@ -30,4 +30,4 @@ jobs:
         run: sam build --template-file infrastructure/apigateway/template.yaml --build-in-source
 
       - name: SAM Deploy
-        run: sam deploy --no-confirm --no-fail-on-empty-changeset --stack-name planning-poker-stack --capabilities CAPABILITY_IAM
+        run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name planning-poker-stack --capabilities CAPABILITY_IAM
