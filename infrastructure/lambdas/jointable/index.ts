@@ -4,7 +4,7 @@ import { marshall } from "@aws-sdk/util-dynamodb";
 
 export const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
    const client = new DynamoDBClient({ region: "us-west-2" });
-
+   //BUMP
    if (event.body === null) {
       return {
          statusCode: 400,
