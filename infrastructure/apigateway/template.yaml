@@ -1,0 +1,217 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  planning-poker
+
+  SAM Template for planning-poker API Gateway and Lambdas
+
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  PlanningPokerWebsocketApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: PlanningPokerWebsocketApi
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: "$request.body.action"
+
+  # Lambda Functions
+  JoinTableFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambdas/jointable/
+      Handler: index.handler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Events:
+        ConnectEvent:
+          Type: Api
+          Properties:
+            ApiId: !Ref PlanningPokerWebsocketApi
+            Route: $connect
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2022"
+        Sourcemap: true
+        EntryPoints:
+          - index.ts
+  
+  DisconnectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambdas/disconnect/
+      Handler: index.handler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Events:
+        DisconnectEvent:
+          Type: Api
+          Properties:
+            ApiId: !Ref PlanningPokerWebsocketApi
+            Route: $disconnect
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2022"
+        Sourcemap: true
+        EntryPoints:
+          - index.ts
+
+  NotifyAllAtTableFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambdas/notify-all-at-table/
+      Handler: index.handler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Events:
+        NotifyAllAtTableEvent:
+          Type: Api
+          Properties:
+            ApiId: !Ref PlanningPokerWebsocketApi
+            Route: notify-all-at-table
+      Environment:
+        Variables:
+          API_GATEWAY_URL: !Sub "https://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/prod"
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: PlanningPokerTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - "execute-api:ManageConnections"
+              Resource: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/prod/*"
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2022"
+        Sourcemap: true
+        EntryPoints:
+          - index.ts
+
+  NotifyVoteEffortFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambdas/notify-vote-effort/
+      Handler: index.handler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Events:
+        NotifyVoteEffortEvent:
+          Type: Api
+          Properties:
+            ApiId: !Ref PlanningPokerWebsocketApi
+            Route: notify-vote-effort
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2022"
+        Sourcemap: true
+        EntryPoints:
+          - index.ts
+
+  NotifyJoinedFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambdas/notifyjoined/
+      Handler: index.handler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Events:
+        NotifyJoinedEvent:
+          Type: Api
+          Properties:
+            ApiId: !Ref PlanningPokerWebsocketApi
+            Route: notifyjoined
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2022"
+        Sourcemap: true
+        EntryPoints:
+          - index.ts
+
+  ResetVoteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambdas/reset-vote/
+      Handler: index.handler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Events:
+        ResetVoteEvent:
+          Type: Api
+          Properties:
+            ApiId: !Ref PlanningPokerWebsocketApi
+            Route: reset-vote
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2022"
+        Sourcemap: true
+        EntryPoints:
+          - index.ts
+
+  VoteEffortFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambdas/vote-effort/
+      Handler: index.handler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Events:
+        VoteEffortEvent:
+          Type: Api
+          Properties:
+            ApiId: !Ref PlanningPokerWebsocketApi
+            Route: vote-effort
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2022"
+        Sourcemap: true
+        EntryPoints:
+          - index.ts
+  
+  Deployment:
+    Type: AWS::ApiGatewayV2::Deployment
+    DependsOn:
+      - JoinTableFunction
+      - DisconnectFunction
+      - NotifyAllAtTableFunction
+      - NotifyVoteEffortFunction
+      - NotifyJoinedFunction
+      - ResetVoteFunction
+      - VoteEffortFunction
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+
+  Stage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      StageName: prod
+      Description: Prod Stage
+      DeploymentId: !Ref Deployment
+      ApiId: !Ref PlanningPokerWebsocketApi
+
+Outputs:
+  WebSocketURI:
+    Description: "The WSS Protocol URI to connect to"
+    Value: !Sub "wss://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/prod"

@@ -5,7 +5,8 @@ import PlayerStatus from './components/PlayerStatus/PlayerStatus';
 import ResultsPanel from './components/ResultsPanel/ResultsPanel';
 import { Message } from './enums/message.enum';
 
-const mySocket = new WebSocket("wss://o9w0z89o6f.execute-api.us-west-2.amazonaws.com/production/");
+const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL;
+const mySocket = new WebSocket(WEBSOCKET_URL);
 
 function App() {
 
