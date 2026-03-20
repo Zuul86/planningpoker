@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'infrastructure/**'
+      - '/.github/workflows/deploy-sam.yml'
 
 jobs:
   build-and-deploy:
@@ -27,7 +28,7 @@ jobs:
           aws-region: us-west-2
           
       - name: SAM Build
-        run: sam build --template-file infrastructure/apigateway/template.yaml --build-in-source
+        run: sam build --template-file infrastructure/apigateway/template.yaml --build-in-source --cached
 
       - name: SAM Deploy
         run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name planning-poker-stack --capabilities CAPABILITY_IAM
