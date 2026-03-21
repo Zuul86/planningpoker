@@ -43,7 +43,7 @@ Resources:
           Properties:
             ApiId: !Ref PlanningPokerWebsocketApi
             Route: $disconnect
-        Default:
+        DefaultRoute:
           Type: Api
           Properties:
             ApiId: !Ref PlanningPokerWebsocketApi
