@@ -62,7 +62,7 @@ Resources:
         - x86_64
       Environment:
         Variables:
-          API_GATEWAY_URL: !Sub "https://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/prod"
+          API_GATEWAY_URL: !Sub "https://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/production"
       Policies:
         - DynamoDBCrudPolicy:
             TableName: PlanningPokerTable
@@ -70,7 +70,7 @@ Resources:
             - Effect: Allow
               Action:
                 - "execute-api:ManageConnections"
-              Resource: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/prod/*"
+              Resource: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/production/*"
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
@@ -328,4 +328,4 @@ Resources:
 Outputs:
   WebSocketURI:
     Description: "The WSS Protocol URI to connect to"
-    Value: !Sub "wss://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/prod"
+    Value: !Sub "wss://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/production"
