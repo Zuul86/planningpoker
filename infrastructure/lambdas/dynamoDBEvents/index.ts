@@ -1,7 +1,6 @@
 import { Context, DynamoDBStreamEvent } from 'aws-lambda';
 import { DynamoDB, QueryCommandInput } from '@aws-sdk/client-dynamodb';
 import { unmarshall } from '@aws-sdk/util-dynamodb';
-import { notifyAllAtTable } from '../utils/notify-all-at-table';
 import { Message } from '../../../web/planning-poker-app/src/enums/message.enum';
 
 export const handler = async (event: DynamoDBStreamEvent, context: Context) => {

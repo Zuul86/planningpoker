@@ -1,7 +1,6 @@
 import { Context, APIGatewayProxyResult, APIGatewayEvent } from 'aws-lambda';
 import { DynamoDBClient, DeleteItemCommand, DeleteItemCommandInput, ScanCommand, ScanCommandInput, DynamoDB, QueryCommandInput, PutItemCommand, PutItemCommandInput } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
-import { notifyAllAtTable } from '../utils/notify-all-at-table';
 import { Message } from '../../../web/planning-poker-app/src/enums/message.enum';
 
 export const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
