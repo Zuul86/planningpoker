@@ -34,25 +34,19 @@ Resources:
             Arn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*"
       Events:
         Connect:
-          Type: Api
+          Type: ApiGatewayWebsocketApi
           Properties:
             ApiId: !Ref PlanningPokerWebsocketApi
-            Path: $connect
-            Method: POST
             RouteKey: $connect
         Disconnect:
-          Type: Api
+          Type: ApiGatewayWebsocketApi
           Properties:
             ApiId: !Ref PlanningPokerWebsocketApi
-            Path: $disconnect
-            Method: POST
             RouteKey: $disconnect
         DefaultRoute:
-          Type: Api
+          Type: ApiGatewayWebsocketApi
           Properties:
             ApiId: !Ref PlanningPokerWebsocketApi
-            Path: $default
-            Method: POST
             RouteKey: $default
     Metadata:
       BuildMethod: esbuild
