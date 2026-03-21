@@ -37,20 +37,17 @@ Resources:
           Type: Api
           Properties:
             ApiId: !Ref PlanningPokerWebsocketApi
-            Path: /$connect
-            Method: post
+            Route: $connect
         Disconnect:
           Type: Api
           Properties:
             ApiId: !Ref PlanningPokerWebsocketApi
-            Path: /$disconnect
-            Method: post
+            Route: $disconnect
         DefaultRoute:
           Type: Api
           Properties:
             ApiId: !Ref PlanningPokerWebsocketApi
-            Path: /$default
-            Method: post
+            Route: $default
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
