@@ -2,10 +2,13 @@ import { Context, APIGatewayProxyResult, APIGatewayEvent } from 'aws-lambda';
 import { DynamoDBClient, DeleteItemCommand, DeleteItemCommandInput, ScanCommand, ScanCommandInput, DynamoDB, QueryCommandInput, PutItemCommand, PutItemCommandInput } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { Message } from '../../../web/planning-poker-app/src/enums/message.enum';
+import { notifyAllAtTable } from '../shared';
+import { ApiGatewayManagementApiClient } from '@aws-sdk/client-apigatewaymanagementapi';
 
 export const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
     const client = new DynamoDBClient({ region: "us-west-2" });
     const docClient = new DynamoDB({ region: "us-west-2" });
+    const apiGatewayClient = new ApiGatewayManagementApiClient({ endpoint: process.env.API_GATEWAY_URL });
 
     const connectionId = event.requestContext?.connectionId;
     const routeKey = event.requestContext?.routeKey;
@@ -141,7 +144,7 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
                     return { statusCode: 200, body: JSON.stringify({ message: "votes-reset" }) };
                 }
                 case Message.RevealEfforts: {
-                    await notifyAllAtTable(tableName, { message: action });
+                    await notifyAllAtTable(apiGatewayClient, client, tableName, { message: action });
                     return { statusCode: 200, body: JSON.stringify({ message: "notify-all" }) };
                 }
             }
