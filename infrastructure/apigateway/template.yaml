@@ -34,17 +34,17 @@ Resources:
             Arn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*"
       Events:
         Connect:
-          Type: Api
+          Type: Websocket
           Properties:
             ApiId: !Ref PlanningPokerWebsocketApi
             Route: $connect
         Disconnect:
-          Type: Api
+          Type: Websocket
           Properties:
             ApiId: !Ref PlanningPokerWebsocketApi
             Route: $disconnect
         DefaultRoute:
-          Type: Api
+          Type: Websocket
           Properties:
             ApiId: !Ref PlanningPokerWebsocketApi
             Route: $default
