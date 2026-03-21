@@ -162,7 +162,7 @@ Resources:
     Type: AWS::ApiGatewayV2::Route
     Properties:
       ApiId: !Ref PlanningPokerWebsocketApi
-      RouteKey: $join-table
+      RouteKey: join-table
       Target: !Join [ "/", [ "integrations", !Ref JoinTableIntegration ] ]
 
   JoinTablePermission:
