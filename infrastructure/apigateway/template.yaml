@@ -17,15 +17,47 @@ Resources:
       ProtocolType: WEBSOCKET
       RouteSelectionExpression: "$request.body.action"
 
-  # Lambda Functions
-  JoinTableFunction:
+  ApiGatewayEventsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../lambdas/jointable/
+      CodeUri: ../lambdas/apiGatewayEvents/
       Handler: index.handler
       Runtime: nodejs20.x
       Architectures:
         - x86_64
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: "PlanningPokerTable"
+        - DynamoDBCrudPolicy:
+            TableName: "PlanningPokerVote"
+        - ArnFullAccess:
+            Arn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*"
+      Events:
+        Connect:
+          Type: Api
+          Properties:
+            ApiId: !Ref PlanningPokerWebsocketApi
+            Route: $connect
+        Disconnect:
+          Type: Api
+          Properties:
+            ApiId: !Ref PlanningPokerWebsocketApi
+            Route: $disconnect
+        Default:
+          Type: Api
+          Properties:
+            ApiId: !Ref PlanningPokerWebsocketApi
+            Route: $default
+        JoinTable:
+          Type: Api
+          Properties:
+            ApiId: !Ref PlanningPokerWebsocketApi
+            Route: join-table
+        VoteEffort:
+          Type: Api
+          Properties:
+            ApiId: !Ref PlanningPokerWebsocketApi
+            Route: vote-effort
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
@@ -35,244 +67,13 @@ Resources:
         EntryPoints:
           - index.ts
   
-  DisconnectFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ../lambdas/disconnect/
-      Handler: index.handler
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Minify: true
-        Target: "es2022"
-        Sourcemap: true
-        EntryPoints:
-          - index.ts
-
-  NotifyVoteEffortFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ../lambdas/notify-vote-effort/
-      Handler: index.handler
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Minify: true
-        Target: "es2022"
-        Sourcemap: true
-        EntryPoints:
-          - index.ts
-
-  NotifyJoinedFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ../lambdas/notifyjoined/
-      Handler: index.handler
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Minify: true
-        Target: "es2022"
-        Sourcemap: true
-        EntryPoints:
-          - index.ts
-
-  ResetVoteFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ../lambdas/reset-vote/
-      Handler: index.handler
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Minify: true
-        Target: "es2022"
-        Sourcemap: true
-        EntryPoints:
-          - index.ts
-
-  VoteEffortFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ../lambdas/vote-effort/
-      Handler: index.handler
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Minify: true
-        Target: "es2022"
-        Sourcemap: true
-        EntryPoints:
-          - index.ts
-  
-  # --- WebSocket Integrations, Routes, and Permissions ---
-
-  # 1. JoinTable
-  JoinTableIntegration:
-    Type: AWS::ApiGatewayV2::Integration
-    Properties:
-      ApiId: !Ref PlanningPokerWebsocketApi
-      IntegrationType: AWS_PROXY
-      IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${JoinTableFunction.Arn}/invocations"
-
-  JoinTableRoute:
-    Type: AWS::ApiGatewayV2::Route
-    Properties:
-      ApiId: !Ref PlanningPokerWebsocketApi
-      RouteKey: join-table
-      Target: !Join [ "/", [ "integrations", !Ref JoinTableIntegration ] ]
-
-  JoinTablePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref JoinTableFunction
-      Principal: apigateway.amazonaws.com
-
-  # 2. Disconnect
-  DisconnectIntegration:
-    Type: AWS::ApiGatewayV2::Integration
-    Properties:
-      ApiId: !Ref PlanningPokerWebsocketApi
-      IntegrationType: AWS_PROXY
-      IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DisconnectFunction.Arn}/invocations"
-
-  DisconnectRoute:
-    Type: AWS::ApiGatewayV2::Route
-    Properties:
-      ApiId: !Ref PlanningPokerWebsocketApi
-      RouteKey: $disconnect
-      Target: !Join [ "/", [ "integrations", !Ref DisconnectIntegration ] ]
-
-  DisconnectPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref DisconnectFunction
-      Principal: apigateway.amazonaws.com
-
-  # 4. NotifyVoteEffort
-  NotifyVoteEffortIntegration:
-    Type: AWS::ApiGatewayV2::Integration
-    Properties:
-      ApiId: !Ref PlanningPokerWebsocketApi
-      IntegrationType: AWS_PROXY
-      IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${NotifyVoteEffortFunction.Arn}/invocations"
-
-  NotifyVoteEffortRoute:
-    Type: AWS::ApiGatewayV2::Route
-    Properties:
-      ApiId: !Ref PlanningPokerWebsocketApi
-      RouteKey: notify-vote-effort
-      Target: !Join [ "/", [ "integrations", !Ref NotifyVoteEffortIntegration ] ]
-
-  NotifyVoteEffortPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref NotifyVoteEffortFunction
-      Principal: apigateway.amazonaws.com
-
-  # 5. NotifyJoined
-  NotifyJoinedIntegration:
-    Type: AWS::ApiGatewayV2::Integration
-    Properties:
-      ApiId: !Ref PlanningPokerWebsocketApi
-      IntegrationType: AWS_PROXY
-      IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${NotifyJoinedFunction.Arn}/invocations"
-
-  NotifyJoinedRoute:
-    Type: AWS::ApiGatewayV2::Route
-    Properties:
-      ApiId: !Ref PlanningPokerWebsocketApi
-      RouteKey: notifyjoined
-      Target: !Join [ "/", [ "integrations", !Ref NotifyJoinedIntegration ] ]
-
-  NotifyJoinedPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref NotifyJoinedFunction
-      Principal: apigateway.amazonaws.com
-
-  # 6. ResetVote
-  ResetVoteIntegration:
-    Type: AWS::ApiGatewayV2::Integration
-    Properties:
-      ApiId: !Ref PlanningPokerWebsocketApi
-      IntegrationType: AWS_PROXY
-      IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ResetVoteFunction.Arn}/invocations"
-
-  ResetVoteRoute:
-    Type: AWS::ApiGatewayV2::Route
-    Properties:
-      ApiId: !Ref PlanningPokerWebsocketApi
-      RouteKey: reset-vote
-      Target: !Join [ "/", [ "integrations", !Ref ResetVoteIntegration ] ]
-
-  ResetVotePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref ResetVoteFunction
-      Principal: apigateway.amazonaws.com
-
-  # 7. VoteEffort
-  VoteEffortIntegration:
-    Type: AWS::ApiGatewayV2::Integration
-    Properties:
-      ApiId: !Ref PlanningPokerWebsocketApi
-      IntegrationType: AWS_PROXY
-      IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${VoteEffortFunction.Arn}/invocations"
-
-  VoteEffortRoute:
-    Type: AWS::ApiGatewayV2::Route
-    Properties:
-      ApiId: !Ref PlanningPokerWebsocketApi
-      RouteKey: vote-effort
-      Target: !Join [ "/", [ "integrations", !Ref VoteEffortIntegration ] ]
-
-  VoteEffortPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref VoteEffortFunction
-      Principal: apigateway.amazonaws.com
-
-  Deployment:
-    Type: AWS::ApiGatewayV2::Deployment
-    DependsOn:
-      - JoinTableRoute
-      - DisconnectRoute
-      - NotifyVoteEffortRoute
-      - NotifyJoinedRoute
-      - ResetVoteRoute
-      - VoteEffortRoute
-    Properties:
-      ApiId: !Ref PlanningPokerWebsocketApi
-
   Stage:
     Type: AWS::ApiGatewayV2::Stage
     Properties:
       StageName: production
       Description: Prod Stage
-      DeploymentId: !Ref Deployment
       ApiId: !Ref PlanningPokerWebsocketApi
+      AutoDeploy: true
 
 Outputs:
   WebSocketURI:

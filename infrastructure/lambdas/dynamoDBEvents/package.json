@@ -1,11 +1,12 @@
 {
-  "name": "notify-vote-effort",
+  "name": "dynamodb-event-handler",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build-debug": "esbuild index.ts --bundle --sourcemap --platform=node --target=es2020 --outfile=dist/index.js",
     "build": "esbuild index.ts --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=dist/index.js",
-    "publish": "cd dist && aws lambda update-function-code --function-name notify-vote-effort --zip-file fileb://index.zip --publish"
+    "publish": "cd dist && aws lambda update-function-code --function-name vote-effort --zip-file fileb://index.zip --publish"
   },
   "author": "",
   "license": "ISC",
@@ -13,7 +14,6 @@
     "esbuild": "^0.16.10"
   },
   "dependencies": {
-    "@aws-sdk/client-apigatewaymanagementapi": "^3.235.0",
     "@aws-sdk/client-dynamodb": "^3.235.0",
     "@aws-sdk/util-dynamodb": "^3.235.0",
     "@types/aws-lambda": "^8.10.109"
