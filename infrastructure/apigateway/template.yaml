@@ -17,6 +17,21 @@ Resources:
       ProtocolType: WEBSOCKET
       RouteSelectionExpression: "$request.body.action"
 
+  SharedLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: ../lambdas/shared/
+      CompatibleRuntimes:
+        - nodejs20.x
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2022"
+        Sourcemap: true
+        EntryPoints:
+          - index.ts
+
   ApiGatewayEventsFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -25,6 +40,8 @@ Resources:
       Runtime: nodejs20.x
       Architectures:
         - x86_64
+      Layers:
+        - !Ref SharedLayer
       Policies:
         - DynamoDBCrudPolicy:
             TableName: "PlanningPokerTable"
