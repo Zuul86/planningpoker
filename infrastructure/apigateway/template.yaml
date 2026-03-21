@@ -10,6 +10,13 @@ Globals:
     Timeout: 3
 
 Resources:
+  PlanningPokerWebsocketApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: PlanningPokerWebsocketApi
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: "$request.body.action"
+
   ApiGatewayEventsFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -24,20 +31,23 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName: "PlanningPokerVote"
         - ArnFullAccess:
-            Arn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessWebsocketApi}/*"
+            Arn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*"
       Events:
-        ConnectEvent:
+        Connect:
           Type: Api
           Properties:
-            Route: $connect
-        DisconnectEvent:
+            ApiId: !Ref PlanningPokerWebsocketApi
+            RouteKey: $connect
+        Disconnect:
           Type: Api
           Properties:
-            Route: $disconnect
-        DefaultEvent:
+            ApiId: !Ref PlanningPokerWebsocketApi
+            RouteKey: $disconnect
+        DefaultRoute:
           Type: Api
           Properties:
-            Route: $default
+            ApiId: !Ref PlanningPokerWebsocketApi
+            RouteKey: $default
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
@@ -46,8 +56,16 @@ Resources:
         Sourcemap: true
         EntryPoints:
           - index.ts
+  
+  Stage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      StageName: production
+      Description: Prod Stage
+      ApiId: !Ref PlanningPokerWebsocketApi
+      AutoDeploy: true
 
 Outputs:
   WebSocketURI:
     Description: "The WSS Protocol URI to connect to"
-    Value: !Sub "wss://${ServerlessWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/production"
+    Value: !Sub "wss://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/production"
