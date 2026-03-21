@@ -48,16 +48,6 @@ Resources:
           Properties:
             ApiId: !Ref PlanningPokerWebsocketApi
             Route: $default
-        JoinTable:
-          Type: Api
-          Properties:
-            ApiId: !Ref PlanningPokerWebsocketApi
-            Route: join-table
-        VoteEffort:
-          Type: Api
-          Properties:
-            ApiId: !Ref PlanningPokerWebsocketApi
-            Route: vote-effort
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
