@@ -166,22 +166,6 @@ Resources:
       FunctionName: !Ref DisconnectFunction
       Principal: apigateway.amazonaws.com
 
-  # 3. NotifyAllAtTable
-  NotifyAllAtTableIntegration:
-    Type: AWS::ApiGatewayV2::Integration
-    Properties:
-      ApiId: !Ref PlanningPokerWebsocketApi
-      IntegrationType: AWS_PROXY
-      IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${NotifyAllAtTableFunction.Arn}/invocations"
-
-
-  NotifyAllAtTablePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref NotifyAllAtTableFunction
-      Principal: apigateway.amazonaws.com
-
   # 4. NotifyVoteEffort
   NotifyVoteEffortIntegration:
     Type: AWS::ApiGatewayV2::Integration
