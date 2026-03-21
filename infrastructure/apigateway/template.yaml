@@ -162,7 +162,7 @@ Resources:
     Type: AWS::ApiGatewayV2::Route
     Properties:
       ApiId: !Ref PlanningPokerWebsocketApi
-      RouteKey: $connect
+      RouteKey: $join-table
       Target: !Join [ "/", [ "integrations", !Ref JoinTableIntegration ] ]
 
   JoinTablePermission:
@@ -320,7 +320,7 @@ Resources:
   Stage:
     Type: AWS::ApiGatewayV2::Stage
     Properties:
-      StageName: prod
+      StageName: production
       Description: Prod Stage
       DeploymentId: !Ref Deployment
       ApiId: !Ref PlanningPokerWebsocketApi
