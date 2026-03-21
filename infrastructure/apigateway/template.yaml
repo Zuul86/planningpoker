@@ -27,15 +27,15 @@ Resources:
             Arn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ServerlessWebsocketApi}/*"
       Events:
         ConnectEvent:
-          Type: Websocket
+          Type: Api
           Properties:
             Route: $connect
         DisconnectEvent:
-          Type: Websocket
+          Type: Api
           Properties:
             Route: $disconnect
         DefaultEvent:
-          Type: Websocket
+          Type: Api
           Properties:
             Route: $default
     Metadata:
