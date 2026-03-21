@@ -52,34 +52,6 @@ Resources:
         EntryPoints:
           - index.ts
 
-  NotifyAllAtTableFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ../lambdas/notify-all-at-table/
-      Handler: index.handler
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
-      Environment:
-        Variables:
-          API_GATEWAY_URL: !Sub "https://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/production"
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: PlanningPokerTable
-        - Statement:
-            - Effect: Allow
-              Action:
-                - "execute-api:ManageConnections"
-              Resource: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/production/*"
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Minify: true
-        Target: "es2022"
-        Sourcemap: true
-        EntryPoints:
-          - index.ts
-
   NotifyVoteEffortFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -202,12 +174,6 @@ Resources:
       IntegrationType: AWS_PROXY
       IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${NotifyAllAtTableFunction.Arn}/invocations"
 
-  NotifyAllAtTableRoute:
-    Type: AWS::ApiGatewayV2::Route
-    Properties:
-      ApiId: !Ref PlanningPokerWebsocketApi
-      RouteKey: notify-all-at-table
-      Target: !Join [ "/", [ "integrations", !Ref NotifyAllAtTableIntegration ] ]
 
   NotifyAllAtTablePermission:
     Type: AWS::Lambda::Permission
