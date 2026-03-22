@@ -172,7 +172,7 @@ Resources:
   Stage:
     Type: AWS::ApiGatewayV2::Stage
     Properties:
-      StageName: production
+      StageName: prod
       Description: Prod Stage
       ApiId: !Ref PlanningPokerWebsocketApi
       AutoDeploy: true
@@ -180,4 +180,4 @@ Resources:
 Outputs:
   WebSocketURI:
     Description: "The WSS Protocol URI to connect to"
-    Value: !Sub "wss://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/production"
+    Value: !Sub "wss://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/prod"
