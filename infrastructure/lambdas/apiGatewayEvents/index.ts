@@ -16,7 +16,7 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
     const voteTableNameEnv = process.env.VOTE_TABLE_NAME || 'PlanningPokerVote';
 
     switch (routeKey) {
-        case '$disconnect': {
+        case Message.Disconnect: {
             const deleteByConnectionId = async (tableName: string) => {
                 const scanFilter: ScanCommandInput = {
                     TableName: tableName,
@@ -108,6 +108,37 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
 
             return { statusCode: 200, body: JSON.stringify({}) };
         }
+        case Message.ResetVote: {
+            if (!event.body) {
+                return { statusCode: 400, body: JSON.stringify({ message: "body is empty" }) };
+            }
+            if (!connectionId) {
+                return { statusCode: 400, body: JSON.stringify({ message: "connectionId is empty" }) };
+            }
+
+            const parsedBody = JSON.parse(event.body);
+            const tableName = parsedBody.tableName;
+
+            const queryParams: QueryCommandInput = {
+                TableName: tableNameEnv,
+                ExpressionAttributeValues: { ':tableName': { S: tableName } },
+                KeyConditionExpression: 'TableName = :tableName'
+            };
+
+            const userData = await docClient.query(queryParams);
+            const totalUsersAtTable = userData.Count || 0;
+
+            for (let i = 0; i < totalUsersAtTable; i++) {
+                const item = userData.Items ? userData.Items[i] : {};
+                const userObj = unmarshall(item);
+                const params: DeleteItemCommandInput = {
+                    TableName: voteTableNameEnv,
+                    Key: marshall({ TableName: tableName, ConnectionId: userObj.ConnectionId })
+                };
+                try { await client.send(new DeleteItemCommand(params)); } catch (err) { console.error(err); }
+            }
+            return { statusCode: 200, body: JSON.stringify({ message: "votes-reset" }) };
+        }
         case '$default': {
             if (!event.body) {
                 return { statusCode: 400, body: JSON.stringify({ message: "body is empty" }) };
@@ -118,31 +149,6 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
             const action = body.action;
         
             switch (action) {
-                case Message.ResetVote: {
-                    if (!connectionId) {
-                        return { statusCode: 400, body: JSON.stringify({ message: "connectionId is empty" }) };
-                    }
-        
-                    const queryParams: QueryCommandInput = {
-                        TableName: tableNameEnv,
-                        ExpressionAttributeValues: { ':tableName': { S: tableName } },
-                        KeyConditionExpression: 'TableName = :tableName'
-                    };
-        
-                    const userData = await docClient.query(queryParams);
-                    const totalUsersAtTable = userData.Count || 0;
-        
-                    for (let i = 0; i < totalUsersAtTable; i++) {
-                        const item = userData.Items ? userData.Items[i] : {};
-                        const userObj = unmarshall(item);
-                        const params: DeleteItemCommandInput = {
-                            TableName: voteTableNameEnv,
-                            Key: marshall({ TableName: tableName, ConnectionId: userObj.ConnectionId })
-                        };
-                        try { await client.send(new DeleteItemCommand(params)); } catch (err) { console.error(err); }
-                    }
-                    return { statusCode: 200, body: JSON.stringify({ message: "votes-reset" }) };
-                }
                 case Message.RevealEfforts: {
                     await notifyAllAtTable(apiGatewayClient, client, tableName, { message: action });
                     return { statusCode: 200, body: JSON.stringify({ message: "notify-all" }) };

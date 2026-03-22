@@ -3,5 +3,6 @@ export enum Message {
   RevealEfforts = 'reveal-efforts',
   ResetVote = 'reset-vote',
   UserJoined = 'user-joined',
-  UserVoted = 'user-voted'
+  UserVoted = 'user-voted',
+  Disconnect = '$disconnect',
 }

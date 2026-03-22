@@ -125,6 +125,14 @@ Resources:
       AuthorizationType: NONE
       Target: !Sub "integrations/${ApiGatewayIntegration}"
 
+  ResetVoteRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      RouteKey: reset-vote
+      AuthorizationType: NONE
+      Target: !Sub "integrations/${ApiGatewayIntegration}"
+
   DefaultRoute:
     Type: AWS::ApiGatewayV2::Route
     Properties:
@@ -188,6 +196,7 @@ Resources:
       - DefaultRoute
       - JoinTableRoute
       - UserVotedRoute
+      - ResetVoteRoute
     Properties:
       StageName: prod
       Description: Prod Stage
