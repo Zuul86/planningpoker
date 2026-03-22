@@ -133,6 +133,14 @@ Resources:
       AuthorizationType: NONE
       Target: !Sub "integrations/${ApiGatewayIntegration}"
 
+  RevealEffortsRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      RouteKey: reveal-efforts
+      AuthorizationType: NONE
+      Target: !Sub "integrations/${ApiGatewayIntegration}"
+
   DefaultRoute:
     Type: AWS::ApiGatewayV2::Route
     Properties:
@@ -197,6 +205,7 @@ Resources:
       - JoinTableRoute
       - UserVotedRoute
       - ResetVoteRoute
+      - RevealEffortsRoute
     Properties:
       StageName: prod
       Description: Prod Stage

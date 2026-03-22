@@ -139,21 +139,17 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
             }
             return { statusCode: 200, body: JSON.stringify({ message: "votes-reset" }) };
         }
-        case '$default': {
+        case Message.RevealEfforts: {
             if (!event.body) {
                 return { statusCode: 400, body: JSON.stringify({ message: "body is empty" }) };
             }
         
             const body = JSON.parse(event.body);
             const tableName = body.tableName;
-            const action = body.action;
-        
-            switch (action) {
-                case Message.RevealEfforts: {
-                    await notifyAllAtTable(apiGatewayClient, client, tableName, { message: action });
-                    return { statusCode: 200, body: JSON.stringify({ message: "notify-all" }) };
-                }
-            }
+            await notifyAllAtTable(apiGatewayClient, client, tableName, { message: Message.RevealEfforts });
+            return { statusCode: 200, body: JSON.stringify({ message: "notify-all" }) };
+        }
+        case '$default': {
         
             return { statusCode: 400, body: JSON.stringify({ message: "unrecognized action" }) };
         }
