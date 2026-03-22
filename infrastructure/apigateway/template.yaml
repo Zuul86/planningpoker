@@ -88,6 +88,8 @@ Resources:
         Sourcemap: true
         EntryPoints:
           - index.ts
+        External:
+          - "@aws-sdk/*"
   
   DynamoDBEventsFunction:
     Type: AWS::Serverless::Function
@@ -125,6 +127,8 @@ Resources:
         Sourcemap: true
         EntryPoints:
           - index.ts
+        External:
+          - "@aws-sdk/*"
 
   Stage:
     Type: AWS::ApiGatewayV2::Stage
