@@ -12,6 +12,8 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
 
     const connectionId = event.requestContext?.connectionId;
     const routeKey = event.requestContext?.routeKey;
+    const tableNameEnv = process.env.TABLE_NAME || 'PlanningPokerTable';
+    const voteTableNameEnv = process.env.VOTE_TABLE_NAME || 'PlanningPokerVote';
 
     switch (routeKey) {
         case '$connect':
@@ -41,8 +43,8 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
                 }
             };
 
-            await deleteByConnectionId('PlanningPokerTable');
-            await deleteByConnectionId('PlanningPokerVote');
+            await deleteByConnectionId(tableNameEnv);
+            await deleteByConnectionId(voteTableNameEnv);
 
             return { statusCode: 200, body: JSON.stringify({ message: "userdisconnected" }) };
         }
@@ -65,7 +67,7 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
             };
 
             const params: PutItemCommandInput = {
-                TableName: "PlanningPokerTable",
+                TableName: tableNameEnv,
                 Item: marshall(document)
             };
 
@@ -96,7 +98,7 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
             };
 
             const params: PutItemCommandInput = {
-                TableName: "PlanningPokerVote",
+                TableName: voteTableNameEnv,
                 Item: marshall(document)
             };
 
@@ -124,7 +126,7 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
                     }
         
                     const queryParams: QueryCommandInput = {
-                        TableName: 'PlanningPokerTable',
+                        TableName: tableNameEnv,
                         ExpressionAttributeValues: { ':tableName': { S: tableName } },
                         KeyConditionExpression: 'TableName = :tableName'
                     };
@@ -136,7 +138,7 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
                         const item = userData.Items ? userData.Items[i] : {};
                         const userObj = unmarshall(item);
                         const params: DeleteItemCommandInput = {
-                            TableName: "PlanningPokerVote",
+                            TableName: voteTableNameEnv,
                             Key: marshall({ TableName: tableName, ConnectionId: userObj.ConnectionId })
                         };
                         try { await client.send(new DeleteItemCommand(params)); } catch (err) { console.error(err); }

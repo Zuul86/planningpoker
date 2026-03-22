@@ -8,6 +8,8 @@ import { notifyAllAtTable } from '../shared';
 export const handler = async (event: DynamoDBStreamEvent, context: Context) => {
     const ddb = new DynamoDBClient({ region: 'us-west-2' });
     const apiGatewayClient = new ApiGatewayManagementApiClient({ endpoint: process.env.API_GATEWAY_URL });
+    const tableNameEnv = process.env.TABLE_NAME || 'PlanningPokerTable';
+    const voteTableNameEnv = process.env.VOTE_TABLE_NAME || 'PlanningPokerVote';
 
     for (const record of event.Records) {
         let tablejoined = record.dynamodb?.NewImage?.TableName?.S || record.dynamodb?.OldImage?.TableName?.S || '';
@@ -18,9 +20,9 @@ export const handler = async (event: DynamoDBStreamEvent, context: Context) => {
 
         const eventSourceARN = record.eventSourceARN || '';
         
-        if (eventSourceARN.includes('PlanningPokerTable')) {
+        if (eventSourceARN.includes(tableNameEnv)) {
             const queryParams = {
-                TableName: 'PlanningPokerTable',
+                TableName: tableNameEnv,
                 ExpressionAttributeValues: { ':tableName': { S: tablejoined } },
                 KeyConditionExpression: 'TableName = :tableName'
             };
@@ -32,16 +34,16 @@ export const handler = async (event: DynamoDBStreamEvent, context: Context) => {
                 userName: usersAtTable
             });
 
-        } else if (eventSourceARN.includes('PlanningPokerVote')) {
+        } else if (eventSourceARN.includes(voteTableNameEnv)) {
             const queryTableParams = {
-                TableName: 'PlanningPokerTable',
+                TableName: tableNameEnv,
                 ExpressionAttributeValues: { ':tableName': { S: tablejoined } },
                 KeyConditionExpression: 'TableName = :tableName'
             };
             const userData = await ddb.send(new QueryCommand(queryTableParams));
 
             const queryVotesParams = {
-                TableName: 'PlanningPokerVote',
+                TableName: voteTableNameEnv,
                 ExpressionAttributeValues: { ':tableName': { S: tablejoined } },
                 KeyConditionExpression: 'TableName = :tableName'
             };

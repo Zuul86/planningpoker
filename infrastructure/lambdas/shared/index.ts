@@ -4,7 +4,7 @@ import { ApiGatewayManagementApiClient, PostToConnectionCommand } from "@aws-sdk
 
 export const notifyAllAtTable = async (apiGateway: ApiGatewayManagementApiClient, ddb: DynamoDBClient, table: string, body: object) => {
     const queryParams = {
-        TableName: 'PlanningPokerTable',
+        TableName: process.env.TABLE_NAME || 'PlanningPokerTable',
         ExpressionAttributeValues: {
             ':tableName': { S: table }
         },

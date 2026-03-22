@@ -13,7 +13,6 @@ Resources:
   PlanningPokerTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: PlanningPokerTable
       AttributeDefinitions:
         - AttributeName: TableName
           AttributeType: S
@@ -31,7 +30,6 @@ Resources:
   PlanningPokerVote:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: PlanningPokerVote
       AttributeDefinitions:
         - AttributeName: TableName
           AttributeType: S
@@ -64,6 +62,8 @@ Resources:
       Environment:
         Variables:
           API_GATEWAY_URL: !Sub "https://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/production"
+          TABLE_NAME: !Ref PlanningPokerTable
+          VOTE_TABLE_NAME: !Ref PlanningPokerVote
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref PlanningPokerTable
@@ -74,7 +74,7 @@ Resources:
             Action:
               - execute-api:ManageConnections
             Resource:
-              - !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*"
+              - !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*"
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
@@ -90,9 +90,9 @@ Resources:
     Type: AWS::Lambda::Permission
     Properties:
       Action: lambda:InvokeFunction
-      FunctionName: !Ref ApiGatewayEventsFunction
+      FunctionName: !GetAtt ApiGatewayEventsFunction.Arn
       Principal: apigateway.amazonaws.com
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*/*"
 
   ApiGatewayIntegration:
     Type: AWS::ApiGatewayV2::Integration
@@ -107,7 +107,7 @@ Resources:
       ApiId: !Ref PlanningPokerWebsocketApi
       RouteKey: $connect
       AuthorizationType: NONE
-      Target: !Join ['/', ['integrations', !Ref ApiGatewayIntegration]]
+      Target: !Sub "integrations/${ApiGatewayIntegration}"
 
   DisconnectRoute:
     Type: AWS::ApiGatewayV2::Route
@@ -115,7 +115,7 @@ Resources:
       ApiId: !Ref PlanningPokerWebsocketApi
       RouteKey: $disconnect
       AuthorizationType: NONE
-      Target: !Join ['/', ['integrations', !Ref ApiGatewayIntegration]]
+      Target: !Sub "integrations/${ApiGatewayIntegration}"
 
   DefaultRoute:
     Type: AWS::ApiGatewayV2::Route
@@ -123,7 +123,7 @@ Resources:
       ApiId: !Ref PlanningPokerWebsocketApi
       RouteKey: $default
       AuthorizationType: NONE
-      Target: !Join ['/', ['integrations', !Ref ApiGatewayIntegration]]
+      Target: !Sub "integrations/${ApiGatewayIntegration}"
 
   DynamoDBEventsFunction:
     Type: AWS::Serverless::Function
@@ -136,13 +136,15 @@ Resources:
       Environment:
         Variables:
           API_GATEWAY_URL: !Sub "https://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/production"
+          TABLE_NAME: !Ref PlanningPokerTable
+          VOTE_TABLE_NAME: !Ref PlanningPokerVote
       Policies:
         - Statement:
           - Effect: Allow
             Action:
               - execute-api:ManageConnections
             Resource:
-              - !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*"
+              - !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*"
       Events:
         Stream:
           Type: DynamoDB
