@@ -125,11 +125,11 @@ Resources:
       AuthorizationType: NONE
       Target: !Sub "integrations/${ApiGatewayIntegration}"
 
-  VoteEffortRoute:
+  UserVotedRoute:
     Type: AWS::ApiGatewayV2::Route
     Properties:
       ApiId: !Ref PlanningPokerWebsocketApi
-      RouteKey: vote-effort
+      RouteKey: user-voted
       AuthorizationType: NONE
       Target: !Sub "integrations/${ApiGatewayIntegration}"
 
@@ -196,7 +196,7 @@ Resources:
       - DisconnectRoute
       - DefaultRoute
       - JoinTableRoute
-      - VoteEffortRoute
+      - UserVotedRoute
     Properties:
       StageName: prod
       Description: Prod Stage
