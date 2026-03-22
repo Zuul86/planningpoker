@@ -27,7 +27,7 @@ jobs:
           aws-region: us-west-2
           
       - name: SAM Build
-        run: sam build --template-file infrastructure/apigateway/template.yaml --build-in-source --cached
+        run: sam build --template-file infrastructure/template.yaml --build-in-source --cached
 
       - name: SAM Deploy
         run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --resolve-s3 --stack-name planning-poker-stack --capabilities CAPABILITY_IAM

@@ -1,0 +1,429 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  planning-poker
+
+  SAM Template for planning-poker API Gateway and Lambdas
+
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  PlanningPokerTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: TableName
+          AttributeType: S
+        - AttributeName: ConnectionId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: TableName
+          KeyType: HASH
+        - AttributeName: ConnectionId
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: ConnectionIdIndex
+          KeySchema:
+            - AttributeName: ConnectionId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+
+  PlanningPokerVote:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: TableName
+          AttributeType: S
+        - AttributeName: ConnectionId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: TableName
+          KeyType: HASH
+        - AttributeName: ConnectionId
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: ConnectionIdIndex
+          KeySchema:
+            - AttributeName: ConnectionId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+
+  PlanningPokerWebsocketApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: PlanningPokerWebsocketApi
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: "$request.body.action"
+
+  DisconnectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./lambdas/apiGatewayEvents/disconnect/
+      Handler: index.handler
+      Runtime: nodejs24.x
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref PlanningPokerTable
+          VOTE_TABLE_NAME: !Ref PlanningPokerVote
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PlanningPokerTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PlanningPokerVote
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2022"
+        Sourcemap: true
+        EntryPoints:
+          - index.ts
+        External:
+          - "@aws-sdk/*"
+  
+  DisconnectPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt DisconnectFunction.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*/*"
+
+  DisconnectIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DisconnectFunction.Arn}/invocations
+
+  JoinTableFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./lambdas/apiGatewayEvents/join-table/
+      Handler: index.handler
+      Runtime: nodejs24.x
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref PlanningPokerTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PlanningPokerTable
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2022"
+        Sourcemap: true
+        EntryPoints:
+          - index.ts
+        External:
+          - "@aws-sdk/*"
+  
+  JoinTablePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt JoinTableFunction.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*/*"
+
+  JoinTableIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${JoinTableFunction.Arn}/invocations
+
+  UserVotedFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./lambdas/apiGatewayEvents/user-voted/
+      Handler: index.handler
+      Runtime: nodejs24.x
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          VOTE_TABLE_NAME: !Ref PlanningPokerVote
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PlanningPokerVote
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2022"
+        Sourcemap: true
+        EntryPoints:
+          - index.ts
+        External:
+          - "@aws-sdk/*"
+  
+  UserVotedPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt UserVotedFunction.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*/*"
+
+  UserVotedIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UserVotedFunction.Arn}/invocations
+
+  ResetVoteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./lambdas/apiGatewayEvents/reset-vote/
+      Handler: index.handler
+      Runtime: nodejs24.x
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref PlanningPokerTable
+          VOTE_TABLE_NAME: !Ref PlanningPokerVote
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref PlanningPokerTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PlanningPokerVote
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2022"
+        Sourcemap: true
+        EntryPoints:
+          - index.ts
+        External:
+          - "@aws-sdk/*"
+  
+  ResetVotePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt ResetVoteFunction.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*/*"
+
+  ResetVoteIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ResetVoteFunction.Arn}/invocations
+
+  RevealEffortsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./lambdas/apiGatewayEvents/reveal-efforts/
+      Handler: index.handler
+      Runtime: nodejs24.x
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          API_GATEWAY_URL: !Sub "https://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/prod"
+          TABLE_NAME: !Ref PlanningPokerTable
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref PlanningPokerTable
+        - Statement:
+          - Effect: Allow
+            Action:
+              - execute-api:ManageConnections
+            Resource:
+              - !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*"
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2022"
+        Sourcemap: true
+        EntryPoints:
+          - index.ts
+        External:
+          - "@aws-sdk/*"
+  
+  RevealEffortsPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt RevealEffortsFunction.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*/*"
+
+  RevealEffortsIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RevealEffortsFunction.Arn}/invocations
+
+  DefaultRouteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./lambdas/apiGatewayEvents/default-route/
+      Handler: index.handler
+      Runtime: nodejs24.x
+      Architectures:
+        - x86_64
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2022"
+        Sourcemap: true
+        EntryPoints:
+          - index.ts
+        External:
+          - "@aws-sdk/*"
+  
+  DefaultRoutePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt DefaultRouteFunction.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*/*"
+
+  DefaultRouteIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DefaultRouteFunction.Arn}/invocations
+
+  DisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      RouteKey: $disconnect
+      AuthorizationType: NONE
+      Target: !Sub "integrations/${DisconnectIntegration}"
+
+  JoinTableRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      RouteKey: join-table
+      AuthorizationType: NONE
+      Target: !Sub "integrations/${JoinTableIntegration}"
+
+  UserVotedRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      RouteKey: user-voted
+      AuthorizationType: NONE
+      Target: !Sub "integrations/${UserVotedIntegration}"
+
+  ResetVoteRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      RouteKey: reset-vote
+      AuthorizationType: NONE
+      Target: !Sub "integrations/${ResetVoteIntegration}"
+
+  RevealEffortsRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      RouteKey: reveal-efforts
+      AuthorizationType: NONE
+      Target: !Sub "integrations/${RevealEffortsIntegration}"
+
+  DefaultRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      RouteKey: $default
+      AuthorizationType: NONE
+      Target: !Sub "integrations/${DefaultRouteIntegration}"
+
+  DynamoDBEventsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./lambdas/dynamoDBEvents/
+      Handler: index.handler
+      Runtime: nodejs24.x
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          API_GATEWAY_URL: !Sub "https://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/prod"
+          TABLE_NAME: !Ref PlanningPokerTable
+          VOTE_TABLE_NAME: !Ref PlanningPokerVote
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref PlanningPokerTable
+        - DynamoDBReadPolicy:
+            TableName: !Ref PlanningPokerVote
+        - Statement:
+          - Effect: Allow
+            Action:
+              - execute-api:ManageConnections
+            Resource:
+              - !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*"
+      Events:
+        Stream:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt PlanningPokerTable.StreamArn
+            BatchSize: 1
+            StartingPosition: LATEST
+        VoteStream:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt PlanningPokerVote.StreamArn
+            BatchSize: 1
+            StartingPosition: LATEST
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2022"
+        Sourcemap: true
+        EntryPoints:
+          - index.ts
+        External:
+          - "@aws-sdk/*"
+
+  Stage:
+    Type: AWS::ApiGatewayV2::Stage
+    DependsOn:
+      - DisconnectRoute
+      - DefaultRoute
+      - JoinTableRoute
+      - UserVotedRoute
+      - ResetVoteRoute
+      - RevealEffortsRoute
+    Properties:
+      StageName: prod
+      Description: Prod Stage
+      ApiId: !Ref PlanningPokerWebsocketApi
+      AutoDeploy: true
+
+Outputs:
+  WebSocketURI:
+    Description: "The WSS Protocol URI to connect to"
+    Value: !Sub "wss://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/prod"
