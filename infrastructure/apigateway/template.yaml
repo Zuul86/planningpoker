@@ -56,7 +56,7 @@ Resources:
     Properties:
       CodeUri: ../lambdas/apiGatewayEvents/
       Handler: index.handler
-      Runtime: nodejs20.x
+      Runtime: nodejs24.x
       Architectures:
         - x86_64
       Environment:
@@ -146,7 +146,7 @@ Resources:
     Properties:
       CodeUri: ../lambdas/dynamoDBEvents/
       Handler: index.handler
-      Runtime: nodejs20.x
+      Runtime: nodejs24.x
       Architectures:
         - x86_64
       Environment:
