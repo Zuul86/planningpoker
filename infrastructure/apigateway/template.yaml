@@ -171,6 +171,10 @@ Resources:
 
   Stage:
     Type: AWS::ApiGatewayV2::Stage
+    DependsOn:
+      - ConnectRoute
+      - DisconnectRoute
+      - DefaultRoute
     Properties:
       StageName: prod
       Description: Prod Stage
