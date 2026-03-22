@@ -68,7 +68,7 @@ Resources:
   DisconnectFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../lambdas/apiGatewayEvents/disconnect/
+      CodeUri: ./lambdas/apiGatewayEvents/disconnect/
       Handler: index.handler
       Runtime: nodejs24.x
       Architectures:
@@ -111,7 +111,7 @@ Resources:
   JoinTableFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../lambdas/apiGatewayEvents/join-table/
+      CodeUri: ./lambdas/apiGatewayEvents/join-table/
       Handler: index.handler
       Runtime: nodejs24.x
       Architectures:
@@ -151,7 +151,7 @@ Resources:
   UserVotedFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../lambdas/apiGatewayEvents/user-voted/
+      CodeUri: ./lambdas/apiGatewayEvents/user-voted/
       Handler: index.handler
       Runtime: nodejs24.x
       Architectures:
@@ -191,7 +191,7 @@ Resources:
   ResetVoteFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../lambdas/apiGatewayEvents/reset-vote/
+      CodeUri: ./lambdas/apiGatewayEvents/reset-vote/
       Handler: index.handler
       Runtime: nodejs24.x
       Architectures:
@@ -234,7 +234,7 @@ Resources:
   RevealEffortsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../lambdas/apiGatewayEvents/reveal-efforts/
+      CodeUri: ./lambdas/apiGatewayEvents/reveal-efforts/
       Handler: index.handler
       Runtime: nodejs24.x
       Architectures:
@@ -281,7 +281,7 @@ Resources:
   DefaultRouteFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../lambdas/apiGatewayEvents/default-route/
+      CodeUri: ./lambdas/apiGatewayEvents/default-route/
       Handler: index.handler
       Runtime: nodejs24.x
       Architectures:
@@ -363,7 +363,7 @@ Resources:
   DynamoDBEventsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../lambdas/dynamoDBEvents/
+      CodeUri: ./lambdas/dynamoDBEvents/
       Handler: index.handler
       Runtime: nodejs24.x
       Architectures:
