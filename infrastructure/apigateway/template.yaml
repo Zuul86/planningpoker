@@ -15,11 +15,15 @@ Resources:
     Properties:
       TableName: PlanningPokerTable
       AttributeDefinitions:
-        - AttributeName: connectionId
+        - AttributeName: TableName
+          AttributeType: S
+        - AttributeName: ConnectionId
           AttributeType: S
       KeySchema:
-        - AttributeName: connectionId
+        - AttributeName: TableName
           KeyType: HASH
+        - AttributeName: ConnectionId
+          KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES
@@ -29,11 +33,15 @@ Resources:
     Properties:
       TableName: PlanningPokerVote
       AttributeDefinitions:
-        - AttributeName: voteId
+        - AttributeName: TableName
+          AttributeType: S
+        - AttributeName: ConnectionId
           AttributeType: S
       KeySchema:
-        - AttributeName: voteId
+        - AttributeName: TableName
           KeyType: HASH
+        - AttributeName: ConnectionId
+          KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES
@@ -53,6 +61,9 @@ Resources:
       Runtime: nodejs20.x
       Architectures:
         - x86_64
+      Environment:
+        Variables:
+          API_GATEWAY_URL: !Sub "https://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/production"
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref PlanningPokerTable
@@ -63,7 +74,7 @@ Resources:
             Action:
               - execute-api:ManageConnections
             Resource:
-              - !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*"
+              - !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*"
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
@@ -81,7 +92,7 @@ Resources:
       Action: lambda:InvokeFunction
       FunctionName: !Ref ApiGatewayEventsFunction
       Principal: apigateway.amazonaws.com
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*/*"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*"
 
   ApiGatewayIntegration:
     Type: AWS::ApiGatewayV2::Integration
@@ -122,13 +133,16 @@ Resources:
       Runtime: nodejs20.x
       Architectures:
         - x86_64
+      Environment:
+        Variables:
+          API_GATEWAY_URL: !Sub "https://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/production"
       Policies:
         - Statement:
           - Effect: Allow
             Action:
               - execute-api:ManageConnections
             Resource:
-              - !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*"
+              - !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*"
       Events:
         Stream:
           Type: DynamoDB
