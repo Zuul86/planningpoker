@@ -23,6 +23,13 @@ Resources:
           KeyType: HASH
         - AttributeName: ConnectionId
           KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: ConnectionIdIndex
+          KeySchema:
+            - AttributeName: ConnectionId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
       BillingMode: PAY_PER_REQUEST
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES
@@ -40,6 +47,13 @@ Resources:
           KeyType: HASH
         - AttributeName: ConnectionId
           KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: ConnectionIdIndex
+          KeySchema:
+            - AttributeName: ConnectionId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
       BillingMode: PAY_PER_REQUEST
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES

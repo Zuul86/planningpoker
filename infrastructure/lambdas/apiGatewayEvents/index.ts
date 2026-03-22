@@ -1,5 +1,5 @@
 import { Context, APIGatewayProxyResult, APIGatewayEvent } from 'aws-lambda';
-import { DynamoDBClient, DeleteItemCommand, DeleteItemCommandInput, ScanCommand, ScanCommandInput, QueryCommand, QueryCommandInput, PutItemCommand, PutItemCommandInput } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, DeleteItemCommand, DeleteItemCommandInput, QueryCommand, QueryCommandInput, PutItemCommand, PutItemCommandInput } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { Message } from './message.enum';
 import { notifyAllAtTable } from '../shared';
@@ -17,12 +17,13 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
     switch (routeKey) {
         case Message.Disconnect: {
             const deleteByConnectionId = async (tableName: string) => {
-                const scanFilter: ScanCommandInput = {
+                const queryFilter: QueryCommandInput = {
                     TableName: tableName,
-                    FilterExpression: "ConnectionId = :connectionId",
+                    IndexName: 'ConnectionIdIndex',
+                    KeyConditionExpression: "ConnectionId = :connectionId",
                     ExpressionAttributeValues: { ":connectionId": { S: connectionId || '' } }
                 }
-                const recordsToDelete = await client.send(new ScanCommand(scanFilter))
+                const recordsToDelete = await client.send(new QueryCommand(queryFilter))
             const items = recordsToDelete.Items || [];
 
             const deletePromises = items.map(item => {
@@ -120,19 +121,19 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
                 KeyConditionExpression: 'TableName = :tableName'
             };
 
-        const userData = await client.send(new QueryCommand(queryParams));
-        const items = userData.Items || [];
+            const userData = await client.send(new QueryCommand(queryParams));
+            const items = userData.Items || [];
 
-        const deletePromises = items.map(item => {
-                const userObj = unmarshall(item);
-                const params: DeleteItemCommandInput = {
-                    TableName: voteTableNameEnv,
-                    Key: marshall({ TableName: tableName, ConnectionId: userObj.ConnectionId })
-                };
-            return client.send(new DeleteItemCommand(params)).catch(err => console.error(err));
-        });
-        await Promise.all(deletePromises);
-            return { statusCode: 200, body: JSON.stringify({ message: "votes-reset" }) };
+            const deletePromises = items.map(item => {
+                    const userObj = unmarshall(item);
+                    const params: DeleteItemCommandInput = {
+                        TableName: voteTableNameEnv,
+                        Key: marshall({ TableName: tableName, ConnectionId: userObj.ConnectionId })
+                    };
+                return client.send(new DeleteItemCommand(params)).catch(err => console.error(err));
+            });
+            await Promise.all(deletePromises);
+                return { statusCode: 200, body: JSON.stringify({ message: "votes-reset" }) };
         }
         case Message.RevealEfforts: {
             if (!event.body) {
