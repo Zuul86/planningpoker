@@ -16,8 +16,6 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
     const voteTableNameEnv = process.env.VOTE_TABLE_NAME || 'PlanningPokerVote';
 
     switch (routeKey) {
-        case '$connect':
-            return { statusCode: 200, body: 'Connected.' };
         case '$disconnect': {
             const deleteByConnectionId = async (tableName: string) => {
                 const scanFilter: ScanCommandInput = {

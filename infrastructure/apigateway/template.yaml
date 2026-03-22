@@ -101,14 +101,6 @@ Resources:
       IntegrationType: AWS_PROXY
       IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ApiGatewayEventsFunction.Arn}/invocations
 
-  ConnectRoute:
-    Type: AWS::ApiGatewayV2::Route
-    Properties:
-      ApiId: !Ref PlanningPokerWebsocketApi
-      RouteKey: $connect
-      AuthorizationType: NONE
-      Target: !Sub "integrations/${ApiGatewayIntegration}"
-
   DisconnectRoute:
     Type: AWS::ApiGatewayV2::Route
     Properties:
@@ -192,7 +184,6 @@ Resources:
   Stage:
     Type: AWS::ApiGatewayV2::Stage
     DependsOn:
-      - ConnectRoute
       - DisconnectRoute
       - DefaultRoute
       - JoinTableRoute
