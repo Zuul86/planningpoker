@@ -61,7 +61,7 @@ Resources:
         - x86_64
       Environment:
         Variables:
-          API_GATEWAY_URL: !Sub "https://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/production"
+          API_GATEWAY_URL: !Sub "https://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/prod"
           TABLE_NAME: !Ref PlanningPokerTable
           VOTE_TABLE_NAME: !Ref PlanningPokerVote
       Policies:
@@ -135,7 +135,7 @@ Resources:
         - x86_64
       Environment:
         Variables:
-          API_GATEWAY_URL: !Sub "https://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/production"
+          API_GATEWAY_URL: !Sub "https://${PlanningPokerWebsocketApi}.execute-api.${AWS::Region}.amazonaws.com/prod"
           TABLE_NAME: !Ref PlanningPokerTable
           VOTE_TABLE_NAME: !Ref PlanningPokerVote
       Policies:
