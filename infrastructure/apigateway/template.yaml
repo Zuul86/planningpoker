@@ -45,13 +45,6 @@ Resources:
       ProtocolType: WEBSOCKET
       RouteSelectionExpression: "$request.body.action"
 
-  SharedLayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      ContentUri: ../lambdas/shared/
-      CompatibleRuntimes:
-        - nodejs20.x
-
   ApiGatewayEventsFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -60,8 +53,6 @@ Resources:
       Runtime: nodejs20.x
       Architectures:
         - x86_64
-      Layers:
-        - !Ref SharedLayer
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref PlanningPokerTable
@@ -97,8 +88,6 @@ Resources:
         Sourcemap: true
         EntryPoints:
           - index.ts
-        External:
-          - "/opt/nodejs/index"
   
   DynamoDBEventsFunction:
     Type: AWS::Serverless::Function
@@ -108,8 +97,6 @@ Resources:
       Runtime: nodejs20.x
       Architectures:
         - x86_64
-      Layers:
-        - !Ref SharedLayer
       Policies:
         - Statement:
           - Effect: Allow
@@ -138,8 +125,6 @@ Resources:
         Sourcemap: true
         EntryPoints:
           - index.ts
-        External:
-          - "/opt/nodejs/index"
 
   Stage:
     Type: AWS::ApiGatewayV2::Stage
