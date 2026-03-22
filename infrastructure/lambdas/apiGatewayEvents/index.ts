@@ -79,7 +79,7 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
 
             return { statusCode: 200, body: JSON.stringify({}) };
         }
-        case Message.VoteEffort: {
+        case Message.UserVoted: {
             if (!event.body) {
                 return { statusCode: 400, body: JSON.stringify({ message: "body is empty" }) };
             }
