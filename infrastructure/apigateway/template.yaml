@@ -64,22 +64,6 @@ Resources:
               - execute-api:ManageConnections
             Resource:
               - !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*"
-      Events:
-        Connect:
-          Type: ApiGatewayWebsocketApi
-          Properties:
-            ApiId: !Ref PlanningPokerWebsocketApi
-            RouteKey: $connect
-        Disconnect:
-          Type: ApiGatewayWebsocketApi
-          Properties:
-            ApiId: !Ref PlanningPokerWebsocketApi
-            RouteKey: $disconnect
-        DefaultRoute:
-          Type: ApiGatewayWebsocketApi
-          Properties:
-            ApiId: !Ref PlanningPokerWebsocketApi
-            RouteKey: $default
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
@@ -91,6 +75,45 @@ Resources:
         External:
           - "@aws-sdk/*"
   
+  ApiGatewayEventsFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref ApiGatewayEventsFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*/*"
+
+  ApiGatewayIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ApiGatewayEventsFunction.Arn}/invocations
+
+  ConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      RouteKey: $connect
+      AuthorizationType: NONE
+      Target: !Join ['/', ['integrations', !Ref ApiGatewayIntegration]]
+
+  DisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      RouteKey: $disconnect
+      AuthorizationType: NONE
+      Target: !Join ['/', ['integrations', !Ref ApiGatewayIntegration]]
+
+  DefaultRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref PlanningPokerWebsocketApi
+      RouteKey: $default
+      AuthorizationType: NONE
+      Target: !Join ['/', ['integrations', !Ref ApiGatewayIntegration]]
+
   DynamoDBEventsFunction:
     Type: AWS::Serverless::Function
     Properties:
