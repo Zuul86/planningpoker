@@ -121,7 +121,7 @@ Resources:
     Type: AWS::ApiGatewayV2::Route
     Properties:
       ApiId: !Ref PlanningPokerWebsocketApi
-      RouteKey: JoinTable
+      RouteKey: join-table
       AuthorizationType: NONE
       Target: !Sub "integrations/${ApiGatewayIntegration}"
 
@@ -129,7 +129,7 @@ Resources:
     Type: AWS::ApiGatewayV2::Route
     Properties:
       ApiId: !Ref PlanningPokerWebsocketApi
-      RouteKey: VoteEffort
+      RouteKey: vote-effort
       AuthorizationType: NONE
       Target: !Sub "integrations/${ApiGatewayIntegration}"
 
