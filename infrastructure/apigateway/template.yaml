@@ -10,6 +10,34 @@ Globals:
     Timeout: 3
 
 Resources:
+  PlanningPokerTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: PlanningPokerTable
+      AttributeDefinitions:
+        - AttributeName: connectionId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: connectionId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+
+  PlanningPokerVote:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: PlanningPokerVote
+      AttributeDefinitions:
+        - AttributeName: voteId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: voteId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+
   PlanningPokerWebsocketApi:
     Type: AWS::ApiGatewayV2::Api
     Properties:
@@ -36,11 +64,15 @@ Resources:
         - !Ref SharedLayer
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: "PlanningPokerTable"
+            TableName: !Ref PlanningPokerTable
         - DynamoDBCrudPolicy:
-            TableName: "PlanningPokerVote"
-        - ArnFullAccess:
-            Arn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*"
+            TableName: !Ref PlanningPokerVote
+        - Statement:
+          - Effect: Allow
+            Action:
+              - execute-api:ManageConnections
+            Resource:
+              - !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*"
       Events:
         Connect:
           Type: ApiGatewayWebsocketApi
@@ -68,6 +100,47 @@ Resources:
         External:
           - "/opt/nodejs/index"
   
+  DynamoDBEventsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambdas/dynamoDBEvents/
+      Handler: index.handler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Layers:
+        - !Ref SharedLayer
+      Policies:
+        - Statement:
+          - Effect: Allow
+            Action:
+              - execute-api:ManageConnections
+            Resource:
+              - !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PlanningPokerWebsocketApi}/*"
+      Events:
+        Stream:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt PlanningPokerTable.StreamArn
+            BatchSize: 1
+            StartingPosition: LATEST
+        VoteStream:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt PlanningPokerVote.StreamArn
+            BatchSize: 1
+            StartingPosition: LATEST
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2022"
+        Sourcemap: true
+        EntryPoints:
+          - index.ts
+        External:
+          - "/opt/nodejs/index"
+
   Stage:
     Type: AWS::ApiGatewayV2::Stage
     Properties:
