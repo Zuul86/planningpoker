@@ -2,7 +2,7 @@ import { Context, APIGatewayProxyResult, APIGatewayEvent } from 'aws-lambda';
 import { DynamoDBClient, PutItemCommand, PutItemCommandInput } from "@aws-sdk/client-dynamodb";
 import { marshall } from '@aws-sdk/util-dynamodb';
 
-const client = new DynamoDBClient({ region: "us-west-2" });
+const client = new DynamoDBClient({});
 
 export const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
     const connectionId = event.requestContext?.connectionId;
@@ -32,9 +32,9 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
 
     try {
         await client.send(new PutItemCommand(params));
+        return { statusCode: 200, body: JSON.stringify({}) };
     } catch (err) {
         console.error(err);
+        return { statusCode: 500, body: JSON.stringify({ message: "Internal server error" }) };
     }
-
-    return { statusCode: 200, body: JSON.stringify({}) };
 }

@@ -11,8 +11,13 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
         return { statusCode: 400, body: JSON.stringify({ message: "body is empty" }) };
     }
 
-    const body = JSON.parse(event.body);
-    const tableName = body.tableName;
-    await notifyAllAtTable(apiGatewayClient, client, tableName, { message: 'reveal-efforts' });
-    return { statusCode: 200, body: JSON.stringify({ message: "notify-all" }) };
+    try {
+        const body = JSON.parse(event.body);
+        const tableName = body.tableName;
+        await notifyAllAtTable(apiGatewayClient, client, tableName, { message: 'reveal-efforts' });
+        return { statusCode: 200, body: JSON.stringify({ message: "notify-all" }) };
+    } catch (err) {
+        console.error(err);
+        return { statusCode: 500, body: JSON.stringify({ message: "Internal server error" }) };
+    }
 }
