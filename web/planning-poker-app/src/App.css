@@ -74,7 +74,6 @@ button {
 
 button:hover {
   background-color: var(--color-primary-hover);
-  transition: all .4s ease-in-out;
 }
 
 input {
@@ -114,6 +113,12 @@ label {
   display: none;
 }
 
+.card>span.badge {
+  background: var(--color-badge-bg);
+  border: thin var(--color-black) solid;
+  text-shadow: 1px 1px 5px var(--color-black);
+}
+
 @media all and (min-width: 960px) {
   .card {
     font-size: 28pt;
@@ -124,9 +129,6 @@ label {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--color-badge-bg);
-    border: thin var(--color-black) solid;
-    text-shadow: 1px 1px 5px var(--color-black);
     border-radius: 50%;
     width: 40px;
     height: 40px;
@@ -149,9 +151,6 @@ label {
 
   .card>span.badge {
     font-size: 16pt;
-    background: var(--color-badge-bg);
-    border: thin var(--color-black) solid;
-    text-shadow: 1px 1px 5px var(--color-black);
   }
 
   .large {
@@ -198,7 +197,6 @@ label {
 .cardSelected {
   background-color: var(--color-card-selected-bg);
   transform: translateY(3px);
-  transition: background-color .25s, transform .25s;
 }
 
 .status {
