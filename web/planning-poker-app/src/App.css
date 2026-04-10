@@ -1,19 +1,21 @@
 :root {
-  --font-primary: Arial, Helvetica, sans-serif;
-  --color-primary: #25aae1;
-  --color-primary-hover: #2528e1;
-  --color-primary-shadow: rgba(49, 196, 190, 0.75);
+  --font-primary: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-primary-shadow: rgba(79, 70, 229, 0.4);
   --color-text-light: #fff;
-  --color-text-dark: rgb(68, 68, 68);
-  --color-bg-input: #f2f2f2;
-  --color-bg-panel: #999;
-  --color-card-bg: ghostwhite;
-  --color-card-selected-bg: lightgray;
-  --color-badge-bg: green;
-  --color-badge-text: lime;
-  --color-highlight: greenyellow;
-  --color-black: black;
-  --color-grey: grey;
+  --color-text-dark: #1f2937;
+  --color-bg-input: #f3f4f6;
+  --color-bg-panel: #f9fafb;
+  --color-card-bg: #ffffff;
+  --color-card-selected-bg: #e0e7ff;
+  --color-card-border: #e5e7eb;
+  --color-badge-bg: #ef4444;
+  --color-badge-text: #ffffff;
+  --color-highlight: #dcfce7;
+  --color-black: #000000;
+  --color-grey: #9ca3af;
+  --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 * {
@@ -102,7 +104,8 @@ label {
 .bottom-panel {
   background: var(--color-bg-panel);
   text-align: center;
-  box-shadow: inset 0 8px 30px var(--color-black);
+  box-shadow: inset 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  border-top: 1px solid var(--color-card-border);
   overflow: auto;
   white-space: nowrap;
   scrollbar-width: none;
@@ -115,8 +118,8 @@ label {
 
 .card>span.badge {
   background: var(--color-badge-bg);
-  border: thin var(--color-black) solid;
-  text-shadow: 1px 1px 5px var(--color-black);
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 @media all and (min-width: 960px) {
@@ -151,6 +154,13 @@ label {
 
   .card>span.badge {
     font-size: 16pt;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    color: var(--color-badge-text);
   }
 
   .large {
@@ -169,14 +179,14 @@ label {
 
 .card {
   position: relative;
-  border: thin solid var(--color-black);
+  border: 1px solid var(--color-card-border);
   width: 1.65em;
   height: 2.3em;
   margin: 5px;
   border-radius: 5px;
   font-family: var(--font-primary);
   font-weight: bold;
-  box-shadow: 5px 5px 5px var(--color-grey);
+  box-shadow: var(--shadow-soft);
   background-color: var(--color-card-bg);
   display: inline-flex;
   justify-content: center;
@@ -196,7 +206,9 @@ label {
 
 .cardSelected {
   background-color: var(--color-card-selected-bg);
-  transform: translateY(3px);
+  border-color: var(--color-primary);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .status {
@@ -207,12 +219,12 @@ label {
 
 .status>div {
   transition: all 0.5s ease;
-  border: solid var(--color-grey) thin;
+  border: solid var(--color-card-border) 1px;
   flex-wrap: nowrap;
   flex: 1;
   background-color: var(--color-card-selected-bg);
   margin: 1px;
-  box-shadow: 2px 2px 2px var(--color-grey);
+  box-shadow: var(--shadow-soft);
 }
 
 .userName {
@@ -236,11 +248,12 @@ label {
 .player-status-container>div {
   font-size: 24pt;
   font-weight: bold;
+  font-family: var(--font-primary);
   padding: 5px;
   transition: all 0.5s ease;
-  border: solid var(--color-grey) thin;
+  border: 1px solid var(--color-card-border);
   background-color: var(--color-card-selected-bg);
-  box-shadow: 2px 2px 2px var(--color-grey);
+  box-shadow: var(--shadow-soft);
 }
 
 .player-status-container>div.highlighted {
