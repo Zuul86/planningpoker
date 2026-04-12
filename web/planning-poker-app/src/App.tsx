@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import './App.css'
 import MyCards from './components/MyCards/MyCards'
 import PlayerStatus from './components/PlayerStatus/PlayerStatus';
@@ -6,7 +6,6 @@ import ResultsPanel from './components/ResultsPanel/ResultsPanel';
 import { Message } from './enums/message.enum';
 
 const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL;
-const mySocket = new WebSocket(WEBSOCKET_URL);
 
 function App() {
 
@@ -15,28 +14,56 @@ function App() {
   const [tableUsers, setTableUsers] = useState([]);
   const [userVotes, setUserVotes] = useState([] as {user: string, effort: number}[]);
   const [revealEfforts, setRevealEfforts] = useState(false);
+  const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    const handleMessage = (e: MessageEvent) => {
-      const payload = JSON.parse(e.data);
-      if (payload.message === Message.UserJoined) {
-        setTableUsers(payload.userName);
-      } else if (payload.message === Message.UserVoted) {
-        setUserVotes(payload.votes);
-      } else if (payload.message === Message.RevealEfforts) {
-        setRevealEfforts(prev => !prev);
-      }
+    let isMounted = true;
+    let reconnectTimeout: ReturnType<typeof setTimeout>;
+
+    const connect = () => {
+      const socket = new WebSocket(WEBSOCKET_URL);
+      socketRef.current = socket;
+
+      socket.onmessage = (e: MessageEvent) => {
+        const payload = JSON.parse(e.data);
+        switch (payload.message) {
+          case Message.UserJoined:
+            setTableUsers(payload.userName);
+            break;
+          case Message.UserVoted:
+            setUserVotes(payload.votes);
+            break;
+          case Message.RevealEfforts:
+            setRevealEfforts(prev => !prev);
+            break;
+        }
+      };
+
+      socket.onclose = () => {
+        if (isMounted) {
+          console.log('WebSocket disconnected. Reconnecting in 3 seconds...');
+          reconnectTimeout = setTimeout(connect, 3000);
+        }
+      };
     };
 
-    mySocket.addEventListener('message', handleMessage);
+    connect();
 
     return () => {
-      mySocket.removeEventListener('message', handleMessage);
+      isMounted = false;
+      clearTimeout(reconnectTimeout);
+      if (socketRef.current) {
+        socketRef.current.close();
+      }
     };
-  }, [mySocket]);
+  }, []);
   
   const sendAction = (action: string, extraData: Record<string, any> = {}) => {
-    mySocket.send(JSON.stringify({ action, tableName, ...extraData }));
+    if (socketRef.current?.readyState === WebSocket.OPEN) {
+      socketRef.current.send(JSON.stringify({ action, tableName, ...extraData }));
+    } else {
+      console.warn('WebSocket is not connected. Message not sent.');
+    }
   };
 
   const joinTable = () => {
