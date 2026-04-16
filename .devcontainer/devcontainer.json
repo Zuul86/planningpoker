@@ -28,7 +28,8 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"google.geminicodeassist"
+				"google.geminicodeassist",
+				"bierner.markdown-mermaid"
 			]
 		}
 	},
