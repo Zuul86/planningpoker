@@ -1,9 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MyCard from "../MyCard/MyCard";
 
-function MyCards({handleVote}:{handleVote: Function}) {
+function MyCards({handleVote, reset}:{handleVote: Function, reset: boolean}) {
 
     const [selectedCard, setSelectedCard] = useState(0);
+
+    useEffect(() => {
+        if (reset) {
+            setSelectedCard(0);
+        }
+    }, [reset]);
 
     function onCardClick(selectedCard: number){
         setSelectedCard(selectedCard);

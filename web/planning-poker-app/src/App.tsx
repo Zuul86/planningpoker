@@ -23,8 +23,11 @@ function App() {
         setTableUsers(payload.userName);
       } else if (payload.message === Message.UserVoted) {
         setUserVotes(payload.votes);
+        if (payload.votes.length === 0) {
+          setRevealEfforts(false);
+        }
       } else if (payload.message === Message.RevealEfforts) {
-        setRevealEfforts(prev => !prev);
+        setRevealEfforts(true);
       }
     };
 
@@ -64,7 +67,7 @@ function App() {
           <button type='button' onClick={joinTable}>Join Table</button>
         </div>
         <div>
-          <button type='button' onClick={handleReveal}>Reveal</button>
+          <button type='button' onClick={handleReveal} disabled={revealEfforts}>Reveal</button>
           <button type='button'onClick={handleResetVotes}>Reset Votes</button>
         </div>
       </div>
@@ -75,7 +78,7 @@ function App() {
         <ResultsPanel efforts={userVotes.map(u => (u.effort))} />
       </div>
       <div className='bottom'>
-        <MyCards handleVote={handleVote}></MyCards>
+        <MyCards handleVote={handleVote} reset={userVotes.length === 0}></MyCards>
       </div>
     </div>
   );
