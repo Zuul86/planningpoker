@@ -4,6 +4,7 @@ import MyCards from './components/MyCards/MyCards'
 import PlayerStatus from './components/PlayerStatus/PlayerStatus';
 import ResultsPanel from './components/ResultsPanel/ResultsPanel';
 import { Message } from './enums/message.enum';
+import confetti from 'canvas-confetti';
 
 const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL;
 
@@ -79,6 +80,12 @@ function App() {
 
   const handleReveal = () => {
     sendAction(Message.RevealEfforts);
+
+    if (userVotes.length > 0 && userVotes.every(vote => vote.effort === userVotes[0].effort)) {
+      setTimeout(() => {
+        confetti();
+      }, 1000);
+    }
   };
 
   const handleResetVotes = () => {
@@ -94,7 +101,9 @@ function App() {
           <button type='button' onClick={joinTable}>Join Table</button>
         </div>
         <div>
-          <button type='button' onClick={handleReveal} disabled={revealEfforts}>Reveal</button>
+          <div id='do-confetti' style={{ display: 'inline-block' }} onClick={!revealEfforts ? handleReveal : undefined}>
+            <button type='button' disabled={revealEfforts} style={{ pointerEvents: revealEfforts ? 'none' : 'auto' }}>Reveal</button>
+          </div>
           <button type='button'onClick={handleResetVotes}>Reset Votes</button>
         </div>
       </div>
