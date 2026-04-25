@@ -12,17 +12,24 @@
 		}
 	},
 
+	// Set environment variables for the container
+	"containerEnv": {
+		"VITE_WEBSOCKET_URL": "wss://dw6ownxq69.execute-api.us-west-2.amazonaws.com/prod",
+		"GOOGLE_APPLICATION_CREDENTIALS": "/home/node/.gcp-sa-key.json"
+	},
+
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	//"forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	//"postCreateCommand": ""
+	"postCreateCommand": "printenv GCP_SA_KEY > /home/node/.gcp-sa-key.json && chmod 600 /home/node/.gcp-sa-key.json",
 
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"google.geminicodeassist"
+				"google.geminicodeassist",
+				"bierner.markdown-mermaid"
 			]
 		}
 	},
